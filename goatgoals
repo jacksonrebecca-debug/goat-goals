@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GOAT Goals · Summer 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐐</text></svg>" />
+
+<!-- =====================================================================
+     EDIT YOUR LINKS HERE
+     Each card is an <a href="...">. To point a card at a game:
+       • A file in THIS repo:   href="goat-maths.html"
+       • Somewhere else:        href="https://your-other-site/..."
+     To add a game, copy a whole <a class="card"> ... </a> block.
+===================================================================== -->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800;12..96,900&family=Nunito:wght@400;600;700;800&display=swap');
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    font-family:'Nunito',sans-serif; color:#15233b; padding:38px 18px 60px;
+    background:
+      radial-gradient(900px 460px at 88% -6%, #fff0cf 0%, transparent 50%),
+      radial-gradient(1000px 520px at 8% 0%, #d4ecff 0%, transparent 55%),
+      radial-gradient(820px 520px at 50% 116%, #d9f5e6 0%, transparent 55%),
+      #f4f9ff;
+    position:relative; overflow-x:hidden;
+  }
+  .wrap { max-width:860px; margin:0 auto; position:relative; z-index:1; }
+  .goat { position:absolute; top:-30px; right:-4px; font-size:62px; animation:bob 3s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-4deg);} 50%{transform:translateY(-10px) rotate(4deg);} }
+  .eyebrow { font-weight:800; letter-spacing:2.5px; text-transform:uppercase; font-size:12px; color:#f5a623; margin-bottom:8px; }
+  h1 { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:clamp(40px,10vw,80px); line-height:.92; letter-spacing:-2px; margin:0; }
+  h1 .hl { color:#2f7ef0; }
+  .lede { font-size:clamp(16px,2.6vw,19px); font-weight:600; color:#5b6b82; margin:16px 0 0; max-width:540px; line-height:1.5; }
+  .lede b { color:#f5a623; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:18px; margin-top:40px; }
+  .card { position:relative; display:flex; flex-direction:column; gap:6px; text-decoration:none; color:#15233b;
+    background:#fff; border:2.5px solid #15233b; border-radius:24px; padding:24px 22px 22px;
+    box-shadow:7px 7px 0 var(--accent); transition:transform .12s ease, box-shadow .12s ease; overflow:hidden; }
+  .card:hover { transform:translate(-2px,-2px); box-shadow:11px 11px 0 var(--accent); }
+  .card .wm { position:absolute; right:-12px; bottom:-30px; font-size:120px; line-height:1; opacity:.10; }
+  .card .glyph { font-size:34px; line-height:1; }
+  .card .tag { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.8px; color:var(--accent);
+    background:var(--soft); align-self:flex-start; padding:4px 10px; border-radius:999px; margin-top:6px; }
+  .card h2 { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:24px; margin:10px 0 0; letter-spacing:-.4px; }
+  .card p { font-size:14px; font-weight:600; color:#5b6b82; margin:4px 0 0; line-height:1.45; }
+  .card .go { margin-top:14px; font-weight:800; color:var(--accent); font-size:14px; }
+  .card.soon { border-style:dashed; border-color:#cdd9e8; box-shadow:7px 7px 0 #e2ebf6; cursor:default; }
+  .card.soon:hover { transform:none; box-shadow:7px 7px 0 #e2ebf6; }
+  .card.soon .go { color:#aab7cb; }
+  footer { margin-top:48px; text-align:center; font-weight:700; color:#aab7cb; font-size:13px; }
+  footer span { color:#2f7ef0; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="goat">🐐</div>
+    <div class="eyebrow">Summer 2026</div>
+    <h1>GOAT <span class="hl">Goals</span></h1>
+    <p class="lede">Greatest Of All Time. Pick a challenge, climb a little higher every day, and reach the <b>summit</b> by the end of summer.</p>
+
+    <div class="grid">
+
+      <!-- ===== GOAT Maths (working) ===== -->
+      <a class="card" href="goat-maths.html" style="--accent:#2f7ef0; --soft:#dbeafe;">
+        <div class="wm">🐐</div>
+        <div class="glyph">🏔️</div>
+        <span class="tag">Maths · daily</span>
+        <h2>GOAT Maths</h2>
+        <p>One challenge a day for 9 weeks — times tables, fractions, brain teasers and fun ones. Build your streak to the summit.</p>
+        <div class="go">Start today's challenge →</div>
+      </a>
+
+      <!-- ===== Add more games here ===== -->
+      <div class="card soon" style="--accent:#15a371; --soft:#d2f3e4;">
+        <div class="wm">⚡</div>
+        <div class="glyph">🛠️</div>
+        <span class="tag">More soon</span>
+        <h2>Add a challenge</h2>
+        <p>Drop a new HTML file in this folder and point a card at it.</p>
+        <div class="go">Coming soon</div>
+      </div>
+
+    </div>
+
+    <footer>Made with <span>♥</span> for the GOAT · Summer 2026</footer>
+  </div>
+</body>
+</html>
