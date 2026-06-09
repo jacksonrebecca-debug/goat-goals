@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GOAT Maths · Climb to Greatness</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐐</text></svg>" />
 
+<!-- React + Babel from CDN. No build step needed. -->
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+<style>
+  html, body { margin: 0; height: 100%; background: #f4f9ff; }
+  #root { min-height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+/* ============================================================================
+   GOAT GOALS · GOAT Maths — one challenge a day, 9 weeks (63 days)
+   ----------------------------------------------------------------------------
+   Pitched for a bright 9-year-old (UK Year 4–5).
+   To edit a question, change the QUESTIONS array below:
+     { day:1, type:"Number Power", diff:2,   // Number Power | Fractions | Brain Teaser | Fun
+       q:"...", hint:"...", answer:"...", why:"..." }
+   ========================================================================== */
+
+const QUESTIONS = [
+  // ---- Week 1 ----
+  { day: 1, type: "Number Power", diff: 1, q: "What is 6 × 7?", hint: "Six lots of seven. Try 6 × 7 = 6 × 5 + 6 × 2.", answer: "42", why: "6 × 7 = 42." },
+  { day: 2, type: "Fractions", diff: 1, q: "What is half of 18?", hint: "Split 18 into two equal piles.", answer: "9", why: "18 ÷ 2 = 9." },
+  { day: 3, type: "Brain Teaser", diff: 2, q: "There are 5 apples in a bowl and you take away 3. How many apples do YOU have?", hint: "Read it carefully — it asks how many YOU have.", answer: "3", why: "You took 3, so you have the 3 you took." },
+  { day: 4, type: "Fun", diff: 1, q: "What number comes next? 5, 10, 15, 20, …", hint: "You're counting up in 5s.", answer: "25", why: "Add 5 each time: 20 + 5 = 25." },
+  { day: 5, type: "Number Power", diff: 1, q: "What goes in the box?  ▢ + 6 = 14", hint: "What do you add to 6 to make 14?", answer: "8", why: "14 − 6 = 8." },
+  { day: 6, type: "Fractions", diff: 2, q: "A pizza is cut into 8 equal slices. You eat 3 of them. What fraction of the pizza is left?", hint: "How many slices are left out of 8?", answer: "5/8", why: "8 − 3 = 5 slices left, so 5/8." },
+  { day: 7, type: "Brain Teaser", diff: 2, q: "A farmer has 6 cows. All but 2 wander off. How many cows are left?", hint: "\"All but 2\" means 2 stay behind.", answer: "2", why: "Only 2 are left — the rest wandered off." },
+
+  // ---- Week 2 ----
+  { day: 8, type: "Fun", diff: 2, q: "A spider has 8 legs. How many legs do 4 spiders have altogether?", hint: "4 lots of 8.", answer: "32", why: "4 × 8 = 32." },
+  { day: 9, type: "Number Power", diff: 2, q: "What is 9 × 4?", hint: "Nine fours — or four nines, same answer.", answer: "36", why: "9 × 4 = 36." },
+  { day: 10, type: "Fractions", diff: 1, q: "What is a quarter of 20?", hint: "Split 20 into 4 equal groups.", answer: "5", why: "20 ÷ 4 = 5." },
+  { day: 11, type: "Brain Teaser", diff: 2, q: "Tom is taller than Sam. Sam is taller than Joe. Who is the shortest?", hint: "Line them up tallest to shortest.", answer: "Joe", why: "Tom > Sam > Joe, so Joe is shortest." },
+  { day: 12, type: "Number Power", diff: 2, q: "What goes in the box?  20 − ▢ = 12", hint: "20 take away what leaves 12?", answer: "8", why: "20 − 12 = 8." },
+  { day: 13, type: "Fun", diff: 2, q: "How many minutes are there in half an hour?", hint: "A whole hour is 60 minutes.", answer: "30", why: "Half of 60 is 30." },
+  { day: 14, type: "Brain Teaser", diff: 3, q: "I'm thinking of a number. When I double it, I get 16. What's my number?", hint: "What halves to give 16? No — what doubles TO 16?", answer: "8", why: "8 doubled is 16, so 16 ÷ 2 = 8." },
+
+  // ---- Week 3 ----
+  { day: 15, type: "Number Power", diff: 2, q: "What is 8 × 8?", hint: "A tricky one to learn — eight eights.", answer: "64", why: "8 × 8 = 64." },
+  { day: 16, type: "Fractions", diff: 2, q: "Which is bigger: 1/2 or 1/3?", hint: "Imagine sharing one cake between 2 people, or between 3.", answer: "1/2", why: "Sharing between fewer people means bigger pieces, so 1/2 > 1/3." },
+  { day: 17, type: "Fun", diff: 2, q: "What number comes next? 1, 2, 4, 8, 16, …", hint: "Each number is double the one before.", answer: "32", why: "16 × 2 = 32 (doubling each time)." },
+  { day: 18, type: "Brain Teaser", diff: 2, q: "A drawer holds 3 red socks and 3 blue socks. The room is dark. How many socks must you grab to be SURE you have a matching pair?", hint: "What's the worst that could happen with just 2?", answer: "3", why: "With 2 you might get one of each colour; a 3rd must match one of them." },
+  { day: 19, type: "Number Power", diff: 1, q: "What is 50 ÷ 5?", hint: "How many 5s fit into 50?", answer: "10", why: "5 × 10 = 50." },
+  { day: 20, type: "Fractions", diff: 2, q: "Share 15 marbles equally between 5 children. How many does each child get?", hint: "15 split into 5 equal groups.", answer: "3", why: "15 ÷ 5 = 3." },
+  { day: 21, type: "Fun", diff: 2, q: "How many days are there in 3 weeks?", hint: "One week is 7 days.", answer: "21", why: "7 × 3 = 21." },
+
+  // ---- Week 4 ----
+  { day: 22, type: "Brain Teaser", diff: 2, q: "A clock shows 3 o'clock. How many hours until it's 7 o'clock?", hint: "Count on: 4, 5, 6, 7…", answer: "4 hours", why: "From 3 to 7 is 4 hours." },
+  { day: 23, type: "Number Power", diff: 2, q: "What is 7 × 6?", hint: "Seven sixes.", answer: "42", why: "7 × 6 = 42." },
+  { day: 24, type: "Fractions", diff: 2, q: "What is 3/4 of 12?", hint: "First find a quarter of 12, then take 3 of them.", answer: "9", why: "12 ÷ 4 = 3, and 3 × 3 = 9." },
+  { day: 25, type: "Fun", diff: 1, q: "What comes next? 10, 20, 30, 40, …", hint: "Counting in 10s.", answer: "50", why: "40 + 10 = 50." },
+  { day: 26, type: "Number Power", diff: 3, q: "What goes in the box?  ▢ × 3 = 21", hint: "What times 3 makes 21?", answer: "7", why: "21 ÷ 3 = 7, because 7 × 3 = 21." },
+  { day: 27, type: "Brain Teaser", diff: 2, q: "If today is Wednesday, what day was it 2 days ago?", hint: "Count backwards: Tuesday, then…", answer: "Monday", why: "Two days before Wednesday is Monday." },
+  { day: 28, type: "Fractions", diff: 2, q: "How many halves are there in 3 whole cakes?", hint: "Each cake gives 2 halves.", answer: "6", why: "3 × 2 = 6 halves." },
+
+  // ---- Week 5 ----
+  { day: 29, type: "Fun", diff: 2, q: "A bag has 6 red sweets and 4 green sweets. You grab one without looking. Which colour are you MORE likely to get?", hint: "There are more of one colour.", answer: "Red", why: "6 red beats 4 green, so red is more likely." },
+  { day: 30, type: "Number Power", diff: 2, q: "What is 12 × 3?", hint: "Ten threes plus two threes.", answer: "36", why: "12 × 3 = 30 + 6 = 36." },
+  { day: 31, type: "Fractions", diff: 3, q: "What is 1/2 + 1/4?", hint: "A half is the same as two quarters.", answer: "3/4", why: "1/2 = 2/4, and 2/4 + 1/4 = 3/4." },
+  { day: 32, type: "Brain Teaser", diff: 3, q: "I have two coins that add up to 30p. One of them is NOT a 20p. What are the two coins?", hint: "Read it sneakily — only ONE of them isn't a 20p.", answer: "A 20p and a 10p", why: "One coin (the 10p) is not a 20p — but the other one IS. They make 30p." },
+  { day: 33, type: "Number Power", diff: 2, q: "What is 100 ÷ 4?", hint: "Half of 100 is 50; half again is…", answer: "25", why: "100 ÷ 4 = 25." },
+  { day: 34, type: "Fun", diff: 2, q: "How many sides does a hexagon have?", hint: "\"Hex\" is a clue.", answer: "6", why: "A hexagon has 6 sides." },
+  { day: 35, type: "Brain Teaser", diff: 3, q: "Sara has 4 sisters and 3 brothers. How many sisters does one of her brothers have?", hint: "Don't forget to count Sara herself!", answer: "5", why: "There are 5 girls in the family (Sara + her 4 sisters), and each brother has all 5 as sisters." },
+
+  // ---- Week 6 ----
+  { day: 36, type: "Number Power", diff: 2, q: "What is 6 × 9?", hint: "Six nines — one less than six tens.", answer: "54", why: "6 × 9 = 60 − 6 = 54." },
+  { day: 37, type: "Fractions", diff: 2, q: "There are 7 days in a week. What fraction of a week is just one day?", hint: "One out of how many?", answer: "1/7", why: "One day out of seven is 1/7." },
+  { day: 38, type: "Fun", diff: 2, q: "What number comes next? 3, 6, 9, 12, …", hint: "It's the 3 times table.", answer: "15", why: "12 + 3 = 15." },
+  { day: 39, type: "Brain Teaser", diff: 3, q: "A snail climbs a 5 m pole. Each day it climbs up 2 m, and each night it slips back 1 m. How many days until it reaches the top?", hint: "Think about the last climb — once it's at the top it won't slip.", answer: "4 days", why: "It gains 1 m net per day (3 m after 3 days). On day 4 it climbs 2 m from 3 m and reaches 5 m." },
+  { day: 40, type: "Number Power", diff: 2, q: "What goes in the box?  30 ÷ ▢ = 6", hint: "30 shared into how many groups gives 6 each?", answer: "5", why: "30 ÷ 5 = 6." },
+  { day: 41, type: "Fractions", diff: 2, q: "What is half of a half?", hint: "Take a half, then halve it again.", answer: "A quarter (1/4)", why: "Half of 1/2 is 1/4." },
+  { day: 42, type: "Fun", diff: 2, q: "How many months of the year have 31 days?", hint: "Use the knuckle trick if you know it!", answer: "7", why: "Jan, Mar, May, Jul, Aug, Oct and Dec — that's 7." },
+
+  // ---- Week 7 ----
+  { day: 43, type: "Number Power", diff: 3, q: "What is 11 × 11?", hint: "11 × 11 = 11 × 10 + 11.", answer: "121", why: "110 + 11 = 121." },
+  { day: 44, type: "Brain Teaser", diff: 3, q: "Four friends are in a room. Each one shakes hands once with every other friend. How many handshakes happen altogether?", hint: "The first person shakes 3 hands, the next shakes 2 new ones…", answer: "6", why: "3 + 2 + 1 = 6 handshakes." },
+  { day: 45, type: "Fractions", diff: 2, q: "What is 2/3 of 9?", hint: "Find a third of 9 first, then take 2 of them.", answer: "6", why: "9 ÷ 3 = 3, and 3 × 2 = 6." },
+  { day: 46, type: "Fun", diff: 2, q: "What is double 35?", hint: "Double 30, double 5, add them.", answer: "70", why: "35 + 35 = 70." },
+  { day: 47, type: "Number Power", diff: 2, q: "What is 8 × 7?", hint: "Eight sevens (the famous tricky one!).", answer: "56", why: "8 × 7 = 56." },
+  { day: 48, type: "Brain Teaser", diff: 3, q: "A book is open. The two facing page numbers add up to 15. What are the two page numbers?", hint: "Facing pages are next to each other — one after the other.", answer: "7 and 8", why: "7 + 8 = 15, and they're consecutive pages." },
+  { day: 49, type: "Fun", diff: 2, q: "How many corners (vertices) does a cube have?", hint: "Count the corners of a dice.", answer: "8", why: "A cube has 8 corners." },
+
+  // ---- Week 8 ----
+  { day: 50, type: "Number Power", diff: 2, q: "What is 144 ÷ 12?", hint: "What times 12 makes 144?", answer: "12", why: "12 × 12 = 144." },
+  { day: 51, type: "Fractions", diff: 3, q: "Which is bigger: 3/4 or 2/3?", hint: "Turn them both into twelfths.", answer: "3/4", why: "3/4 = 9/12 and 2/3 = 8/12, so 3/4 is bigger." },
+  { day: 52, type: "Brain Teaser", diff: 2, q: "If 2 cats catch 2 mice in 2 minutes, how long does it take 1 cat to catch 1 mouse?", hint: "Each cat is catching one mouse at the same time.", answer: "2 minutes", why: "All the cats work at once, so one cat still takes 2 minutes for its mouse." },
+  { day: 53, type: "Fun", diff: 2, q: "In Roman numerals, what number is XII?", hint: "X is 10, and II is two more.", answer: "12", why: "X (10) + II (2) = 12." },
+  { day: 54, type: "Number Power", diff: 3, q: "A number multiplied by itself gives 9. What is the number?", hint: "What times itself makes 9?", answer: "3", why: "3 × 3 = 9." },
+  { day: 55, type: "Fractions", diff: 2, q: "A chocolate bar has 12 squares. You eat 1/3 of it. How many squares did you eat?", hint: "A third of 12.", answer: "4", why: "12 ÷ 3 = 4 squares." },
+  { day: 56, type: "Fun", diff: 2, q: "How many seconds are there in 2 minutes?", hint: "One minute is 60 seconds.", answer: "120", why: "60 × 2 = 120." },
+
+  // ---- Week 9 ----
+  { day: 57, type: "Brain Teaser", diff: 3, q: "I'm an odd number. Take away one letter and I become even. What number am I?", hint: "Think about how the number is spelled.", answer: "Seven", why: "Remove the 's' from SEVEN and you get EVEN." },
+  { day: 58, type: "Number Power", diff: 2, q: "What is 9 × 9?", hint: "Nine nines — one less than nine tens.", answer: "81", why: "9 × 9 = 90 − 9 = 81." },
+  { day: 59, type: "Fractions", diff: 2, q: "Share 20 stickers equally between 4 children. How many does each get?", hint: "20 split into 4 groups.", answer: "5", why: "20 ÷ 4 = 5." },
+  { day: 60, type: "Fun", diff: 3, q: "What number comes next? 1, 4, 9, 16, …", hint: "1×1, 2×2, 3×3, 4×4 … what's next?", answer: "25", why: "These are square numbers; the next is 5 × 5 = 25." },
+  { day: 61, type: "Number Power", diff: 3, q: "What goes in the box?  7 × ▢ = 63", hint: "Seven times what makes 63?", answer: "9", why: "63 ÷ 7 = 9." },
+  { day: 62, type: "Brain Teaser", diff: 3, q: "3 children can eat 3 ice creams in 3 minutes. How many children are needed to eat 6 ice creams in 6 minutes?", hint: "How many ice creams can ONE child eat in 6 minutes?", answer: "3 children", why: "One child eats 1 ice cream in 3 minutes, so 2 in 6 minutes. 3 children eat 6 in 6 minutes." },
+  { day: 63, type: "Fun", diff: 1, q: "Final challenge! How many days are there in 9 weeks?", hint: "Days in a week × number of weeks.", answer: "63", why: "7 × 9 = 63 — one challenge for every day. You reached the summit! 🐐🏔️" },
+];
+
+const TYPE_META = {
+  "Number Power": { color: "#2f7ef0", soft: "#dbeafe", glyph: "×" },
+  "Fractions":    { color: "#15a371", soft: "#d2f3e4", glyph: "½" },
+  "Brain Teaser": { color: "#f5681e", soft: "#ffe2d1", glyph: "?" },
+  "Fun":          { color: "#7c5cf6", soft: "#e7defe", glyph: "★" },
+};
+
+const STORAGE_KEY = "goat-goals-maths:v1";   // <- different key from sister's game, so progress never clashes
+const TOTAL = QUESTIONS.length;
+
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function daysBetween(startISO, endISO) {
+  const a = new Date(startISO + "T00:00:00");
+  const b = new Date(endISO + "T00:00:00");
+  return Math.round((b - a) / 86400000);
+}
+function clamp(n, lo, hi) { return Math.min(Math.max(n, lo), hi); }
+function loadState() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) return JSON.parse(raw); } catch (e) {}
+  return null;
+}
+
+function GoatMaths() {
+  const saved = useRef(loadState()).current;
+  const [startDate, setStartDate] = useState((saved && saved.startDate) || todayISO());
+  const [completed, setCompleted] = useState((saved && saved.completed) || {});
+  const currentDay = clamp(daysBetween(startDate, todayISO()) + 1, 1, TOTAL);
+  const [selected, setSelected] = useState(() => clamp(daysBetween(((saved && saved.startDate) || todayISO()), todayISO()) + 1, 1, TOTAL));
+  const [showHint, setShowHint] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [burst, setBurst] = useState(0);
+
+  useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ startDate, completed })); } catch (e) {} }, [startDate, completed]);
+  useEffect(() => { setShowHint(false); setShowAnswer(false); }, [selected]);
+
+  const q = QUESTIONS.find((x) => x.day === selected);
+  const meta = TYPE_META[q.type] || TYPE_META["Fun"];
+  const solvedCount = Object.values(completed).filter((c) => c.solved).length;
+
+  let streak = 0;
+  for (let d = currentDay; d >= 1; d--) { if (completed[d] && completed[d].solved) streak++; else break; }
+
+  function markSolved() { setCompleted((prev) => ({ ...prev, [selected]: { ...(prev[selected] || {}), solved: true } })); setBurst((b) => b + 1); }
+  function unmark() { setCompleted((prev) => { const n = { ...prev }; if (n[selected]) n[selected] = { ...n[selected], solved: false }; return n; }); }
+  function peek() { setShowAnswer(true); setCompleted((prev) => ({ ...prev, [selected]: { ...(prev[selected] || {}), peeked: true } })); }
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Nunito:wght@400;600;700;800&display=swap');
+    .ggm * { box-sizing: border-box; }
+    .ggm { font-family:'Nunito',sans-serif; color:#15233b; min-height:100vh; padding:22px 16px 50px;
+      background: radial-gradient(900px 460px at 88% -6%, #fff0cf 0%, transparent 50%), radial-gradient(1000px 520px at 8% 0%, #d4ecff 0%, transparent 55%), radial-gradient(800px 520px at 50% 116%, #d9f5e6 0%, transparent 55%), #f4f9ff; position:relative; }
+    .ggm-wrap { max-width:720px; margin:0 auto; position:relative; }
+    .ggm-back { display:inline-block; text-decoration:none; color:#7a8aa3; font-weight:800; font-size:14px; margin-bottom:14px; }
+    .ggm-back:hover { color:#2f7ef0; }
+    .ggm-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:18px; }
+    .ggm-title { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:clamp(28px,7vw,44px); line-height:.98; letter-spacing:-1px; margin:0; }
+    .ggm-title .hl { color:#f5a623; }
+    .ggm-sub { font-weight:700; color:#7a8aa3; font-size:14px; margin-top:4px; }
+    .ggm-gear { background:#fff; border:2px solid #e2ebf6; width:42px; height:42px; border-radius:14px; font-size:18px; cursor:pointer; box-shadow:0 3px 0 #e2ebf6; flex:none; }
+    .ggm-gear:active { transform:translateY(2px); box-shadow:0 1px 0 #e2ebf6; }
+    .ggm-stats { display:flex; gap:10px; margin-bottom:18px; }
+    .ggm-stat { flex:1; background:#fff; border:2px solid #e2ebf6; border-radius:16px; padding:10px 14px; box-shadow:0 4px 0 #e2ebf6; }
+    .ggm-stat b { font-family:'Bricolage Grotesque',sans-serif; font-size:24px; display:block; line-height:1; }
+    .ggm-stat span { font-size:12px; font-weight:800; color:#9aa9bf; text-transform:uppercase; letter-spacing:.6px; }
+    .ggm-card { background:#fff; border:2.5px solid #15233b; border-radius:26px; padding:24px 22px; box-shadow:8px 8px 0 ${meta.color}; position:relative; overflow:hidden; }
+    .ggm-card .watermark { position:absolute; right:-6px; bottom:-40px; font-size:160px; font-family:'Bricolage Grotesque',sans-serif; font-weight:800; color:${meta.soft}; line-height:1; user-select:none; }
+    .ggm-badge { display:inline-flex; align-items:center; gap:7px; background:${meta.soft}; color:${meta.color}; font-weight:800; font-size:13px; padding:6px 12px; border-radius:999px; text-transform:uppercase; letter-spacing:.5px; }
+    .ggm-day { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:13px; color:#9aa9bf; letter-spacing:.5px; margin-top:14px; }
+    .ggm-q { font-size:clamp(20px,4.6vw,26px); font-weight:800; line-height:1.35; margin:6px 0 0; position:relative; }
+    .ggm-diff { margin-top:12px; font-size:12px; font-weight:800; color:#aab7cb; }
+    .ggm-diff .dot { color:${meta.color}; }
+    .ggm-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; position:relative; }
+    .ggm-btn { font-family:'Nunito',sans-serif; font-weight:800; font-size:15px; border:2.5px solid #15233b; background:#fff; padding:11px 18px; border-radius:14px; cursor:pointer; box-shadow:0 4px 0 #15233b; transition:transform .05s; }
+    .ggm-btn:active { transform:translateY(3px); box-shadow:0 1px 0 #15233b; }
+    .ggm-btn.solve { background:${meta.color}; color:#fff; }
+    .ggm-btn.solved { background:#15a371; color:#fff; }
+    .ggm-btn.ghost { box-shadow:0 4px 0 #e2ebf6; border-color:#e2ebf6; color:#5b6b82; }
+    .ggm-reveal { margin-top:16px; background:${meta.soft}; border-radius:16px; padding:14px 16px; font-weight:600; line-height:1.5; animation:pop .25s ease; }
+    .ggm-reveal .lab { font-weight:800; color:${meta.color}; text-transform:uppercase; font-size:12px; letter-spacing:.6px; display:block; margin-bottom:3px; }
+    .ggm-reveal .ans { font-family:'Bricolage Grotesque',sans-serif; font-size:22px; font-weight:800; }
+    @keyframes pop { from {opacity:0; transform:translateY(6px) scale(.98);} to {opacity:1; transform:none;} }
+    .ggm-nav { display:flex; align-items:center; justify-content:space-between; margin-top:18px; gap:10px; }
+    .ggm-navbtn { border:2px solid #e2ebf6; background:#fff; border-radius:12px; padding:8px 14px; font-weight:800; cursor:pointer; box-shadow:0 3px 0 #e2ebf6; }
+    .ggm-navbtn:disabled { opacity:.35; cursor:default; box-shadow:none; }
+    .ggm-today { background:#15233b; color:#fff; border:2px solid #15233b; box-shadow:0 3px 0 #000; }
+    .ggm-section { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:16px; margin:26px 0 10px; color:#5b6b82; }
+    .ggm-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; }
+    .ggm-cell { aspect-ratio:1; border-radius:11px; border:2px solid #e2ebf6; background:#fff; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#aab7cb; position:relative; }
+    .ggm-cell.done { background:#15a371; color:#fff; border-color:#15a371; }
+    .ggm-cell.peeked { background:#eef3fb; color:#9aa9bf; border-color:#dde6f2; }
+    .ggm-cell.today { border-color:#15233b; border-width:2.5px; color:#15233b; box-shadow:0 0 0 3px #ffe0a3; }
+    .ggm-cell.sel { transform:scale(1.08); box-shadow:0 0 0 2px ${meta.color}; }
+    .ggm-weeklab { font-size:11px; font-weight:800; color:#b6c2d6; grid-column:1 / -1; margin-top:6px; text-transform:uppercase; letter-spacing:.5px; }
+    .ggm-modal { position:fixed; inset:0; background:rgba(21,35,59,.5); display:flex; align-items:center; justify-content:center; padding:20px; z-index:50; }
+    .ggm-modal-card { background:#f4f9ff; border:2.5px solid #15233b; border-radius:22px; padding:24px; max-width:380px; width:100%; box-shadow:8px 8px 0 #f5a623; }
+    .ggm-modal-card h3 { font-family:'Bricolage Grotesque',sans-serif; margin:0 0 6px; font-size:22px; }
+    .ggm-modal-card p { font-size:14px; color:#5b6b82; font-weight:600; margin:0 0 16px; line-height:1.5; }
+    .ggm-modal-card input { font-family:'Nunito',sans-serif; font-size:16px; font-weight:700; padding:10px 12px; border:2px solid #15233b; border-radius:12px; width:100%; margin-bottom:16px; }
+    .ggm-confetti { position:absolute; left:50%; top:30%; pointer-events:none; }
+    .ggm-confetti i { position:absolute; width:9px; height:9px; border-radius:2px; animation:fly .9s ease-out forwards; }
+    @keyframes fly { to { transform:translate(var(--x), var(--y)) rotate(var(--r)); opacity:0; } }
+  `;
+  const confettiColors = ["#2f7ef0", "#15a371", "#f5681e", "#7c5cf6", "#f5a623"];
+
+  return (
+    <div className="ggm">
+      <style>{css}</style>
+      <div className="ggm-wrap">
+        <a className="ggm-back" href="goat-goals.html">← GOAT Goals</a>
+        <div className="ggm-head">
+          <div>
+            <h1 className="ggm-title">GOAT <span className="hl">Maths</span> 🐐</h1>
+            <div className="ggm-sub">Climb to greatness · one challenge a day · 63 days</div>
+          </div>
+          <button className="ggm-gear" onClick={() => setShowSettings(true)} title="Settings">⚙</button>
+        </div>
+
+        <div className="ggm-stats">
+          <div className="ggm-stat"><b>{solvedCount}<span style={{ fontSize: 13, color: "#b6c2d6" }}> / {TOTAL}</span></b><span>Conquered</span></div>
+          <div className="ggm-stat"><b>{streak} 🔥</b><span>Day streak</span></div>
+          <div className="ggm-stat"><b>{currentDay}</b><span>Today is day</span></div>
+        </div>
+
+        <div className="ggm-card">
+          <div className="watermark">{meta.glyph}</div>
+          <span className="ggm-badge">{meta.glyph} {q.type}</span>
+          <div className="ggm-day">DAY {q.day}{q.day === currentDay ? " · today" : q.day < currentDay ? " · catch-up" : " · coming up"}</div>
+          <p className="ggm-q">{q.q}</p>
+          <div className="ggm-diff">Challenge level: <span className="dot">{"▲".repeat(q.diff)}</span><span style={{ color: "#e3eaf4" }}>{"▲".repeat(3 - q.diff)}</span></div>
+
+          <div className="ggm-actions">
+            {burst > 0 && (
+              <div className="ggm-confetti" key={burst}>
+                {Array.from({ length: 14 }).map((_, i) => {
+                  const ang = (i / 14) * Math.PI * 2;
+                  return <i key={i} style={{ background: confettiColors[i % confettiColors.length], "--x": `${Math.cos(ang) * 90}px`, "--y": `${Math.sin(ang) * 90 - 20}px`, "--r": `${Math.random() * 360}deg` }} />;
+                })}
+              </div>
+            )}
+            {q.hint && <button className="ggm-btn ghost" onClick={() => setShowHint((s) => !s)}>{showHint ? "Hide hint" : "💡 Hint"}</button>}
+            <button className="ggm-btn ghost" onClick={peek}>👀 Reveal answer</button>
+            {completed[selected] && completed[selected].solved
+              ? <button className="ggm-btn solved" onClick={unmark}>✓ Conquered!</button>
+              : <button className="ggm-btn solve" onClick={markSolved}>I nailed it 💪</button>}
+          </div>
+
+          {showHint && q.hint && (<div className="ggm-reveal"><span className="lab">Hint</span>{q.hint}</div>)}
+          {showAnswer && (
+            <div className="ggm-reveal">
+              <span className="lab">Answer</span>
+              <div className="ans">{q.answer}</div>
+              {q.why && <div style={{ marginTop: 8, fontWeight: 600 }}>{q.why}</div>}
+            </div>
+          )}
+        </div>
+
+        <div className="ggm-nav">
+          <button className="ggm-navbtn" disabled={selected <= 1} onClick={() => setSelected((s) => Math.max(1, s - 1))}>← Prev</button>
+          <button className="ggm-navbtn ggm-today" onClick={() => setSelected(currentDay)}>Jump to today</button>
+          <button className="ggm-navbtn" disabled={selected >= TOTAL} onClick={() => setSelected((s) => Math.min(TOTAL, s + 1))}>Next →</button>
+        </div>
+
+        <div className="ggm-section">Your 63-day climb 🏔️</div>
+        <div className="ggm-grid">
+          {QUESTIONS.map((item, idx) => {
+            const c = completed[item.day] || {};
+            const cls = ["ggm-cell", c.solved ? "done" : (c.peeked ? "peeked" : ""), item.day === currentDay ? "today" : "", item.day === selected ? "sel" : ""].join(" ");
+            const newWeek = idx % 7 === 0;
+            return (
+              <React.Fragment key={item.day}>
+                {newWeek && <div className="ggm-weeklab">Week {idx / 7 + 1}</div>}
+                <button className={cls} onClick={() => setSelected(item.day)} title={`Day ${item.day} · ${item.type}`}>{c.solved ? "✓" : item.day}</button>
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+
+      {showSettings && (
+        <div className="ggm-modal" onClick={() => setShowSettings(false)}>
+          <div className="ggm-modal-card" onClick={(e) => e.stopPropagation()}>
+            <h3>When does summer start? 🐐</h3>
+            <p>Pick the first day of the holidays. The climb lines “today’s challenge” up with the calendar from there.</p>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            <button className="ggm-btn solve" style={{ width: "100%" }} onClick={() => setShowSettings(false)}>Save</button>
+            <button className="ggm-btn ghost" style={{ width: "100%", marginTop: 10 }}
+              onClick={() => { if (window.confirm("Reset all progress?")) { setCompleted({}); setShowSettings(false); } }}>Reset progress</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<GoatMaths />);
+</script>
+</body>
+</html>
