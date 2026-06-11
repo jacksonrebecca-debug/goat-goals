@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Writer's Den · Spark · Write · 500 Words</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪶</text></svg>" />
+
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+<style>
+  html, body { margin: 0; height: 100%; background: #f4f9ff; }
+  #root { min-height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+/* ============================================================================
+   GOAT GOALS · Writer's Den
+   A story spark a day + a writing studio with a 500-word meter and saved drafts.
+   Add or change prompts in the PROMPTS array, and tips in the TIPS array.
+   ========================================================================== */
+
+const PROMPTS = [
+  "Write about a wild animal trying to find a home in a world full of people.",
+  "A fox visits a city garden at midnight. Tell the story through the fox's eyes.",
+  "Describe a single tree as it changes through all four seasons.",
+  "Two creatures want the same patch of land. Who wins, and how?",
+  "You find a baby bird that has fallen from its nest. What happens next?",
+  "Write a letter from a river to the people who live beside it.",
+  "Imagine the very last animal of its kind. Tell its story.",
+  "Follow a bee on its journey across a meadow that is slowly being built on.",
+  "Describe a storm rolling in over the sea — or over the hills.",
+  "An old oak tree has watched the same field for 200 years. What has it seen?",
+  "Write about the moment a wild animal and a child finally understand each other.",
+  "A puddle, a worm, and a rainy playground — make something magical happen.",
+  "Describe your favourite wild place so clearly that the reader can stand in it.",
+  "Write as a bird migrating somewhere warm for the winter.",
+  "A garden at dawn: what wakes up first, and what does it do?",
+  "You wake up able to talk to one animal for a single day. Which one, and what happens?",
+  "A secret door appears at the bottom of the garden…",
+  "Begin your story with: \"The snow fell like…\" and keep going.",
+  "Describe a creature that nobody has ever seen before.",
+  "The wind has an important job to do today. Follow it.",
+  "Two hedgehogs, one busy road, and a clever plan to cross it safely.",
+  "Write about a place where nature has slowly taken an old building back.",
+  "A rock pool at low tide is a whole tiny world. Explore it.",
+  "Tell the story of a seed that travels a very long way before it grows.",
+  "A young wolf learns something important from the rest of the pack.",
+  "Describe the same forest twice — once in daylight, once at night.",
+  "Write about nursing an injured wild creature back to health and setting it free.",
+  "An owl and a mouse, on one moonlit night…",
+  "Imagine you shrink to the size of an ant in your own garden.",
+  "What would a whale most want to tell us, if only it could speak?",
+];
+
+const TIPS = [
+  "Swap a dull word like \"nice\" or \"big\" for a stronger one.",
+  "Add a simile: \"…as quiet as…\" or \"…like a…\".",
+  "Use your five senses — what can you see, hear and smell?",
+  "Turn \"the dog\" into an expanded noun phrase: \"the scruffy little dog with muddy paws\".",
+  "Pick a stronger verb than \"walked\" or \"said\".",
+  "Open with an action or a sound to grab your reader straight away.",
+  "Try a little alliteration: \"slippery silver snakes\".",
+  "Show a feeling without naming it — let what the character does tell us.",
+];
+
+const STORAGE_KEY = "goat-goals-writers-den:v1";
+
+function todayIndex(len) {
+  const d = new Date();
+  const start = new Date(d.getFullYear(), 0, 0);
+  const day = Math.floor((d - start) / 86400000);
+  return day % len;
+}
+function loadState() { try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch (e) {} return null; }
+function wordCount(t) { const s = (t || "").trim(); return s ? s.split(/\s+/).length : 0; }
+
+function WritersDen() {
+  const saved = useRef(loadState()).current;
+  const [drafts, setDrafts] = useState((saved && saved.drafts) || []);
+  const [currentId, setCurrentId] = useState(null);
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+  const [prompt, setPrompt] = useState(PROMPTS[todayIndex(PROMPTS.length)]);
+  const [tip, setTip] = useState(TIPS[todayIndex(TIPS.length)]);
+  const [justSaved, setJustSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ drafts })); } catch (e) {} }, [drafts]);
+
+  const count = wordCount(text);
+  const pct = Math.min(count / 500 * 100, 100);
+  let meterColor = "#9aa9bf", meterMsg = "Start writing…";
+  if (count > 0 && count < 150) { meterColor = "#2f7ef0"; meterMsg = "Off you go!"; }
+  else if (count >= 150 && count < 350) { meterColor = "#2f7ef0"; meterMsg = "Building nicely…"; }
+  else if (count >= 350 && count <= 500) { meterColor = "#15a371"; meterMsg = "Great length for the competition!"; }
+  else if (count > 500) { meterColor = "#f5a623"; meterMsg = "A little over 500 — competitions allow up to 500."; }
+
+  function newSpark() {
+    let i = Math.floor(Math.random() * PROMPTS.length);
+    if (PROMPTS[i] === prompt) i = (i + 1) % PROMPTS.length;
+    setPrompt(PROMPTS[i]);
+    setTip(TIPS[Math.floor(Math.random() * TIPS.length)]);
+  }
+
+  function startNew() {
+    setCurrentId(null); setTitle(""); setText("");
+    newSpark();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function save() {
+    const now = Date.now();
+    const entry = { id: currentId || now, title: title.trim() || "Untitled story", prompt, text, updated: now };
+    setDrafts((prev) => {
+      const exists = prev.some((d) => d.id === entry.id);
+      return exists ? prev.map((d) => (d.id === entry.id ? entry : d)) : [entry, ...prev];
+    });
+    setCurrentId(entry.id);
+    setJustSaved(true); setTimeout(() => setJustSaved(false), 1600);
+  }
+
+  function loadDraft(d) {
+    setCurrentId(d.id); setTitle(d.title === "Untitled story" ? "" : d.title);
+    setText(d.text); setPrompt(d.prompt || prompt);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function deleteDraft(id) {
+    if (!window.confirm("Delete this story?")) return;
+    setDrafts((prev) => prev.filter((d) => d.id !== id));
+    if (currentId === id) startNew();
+  }
+  function copyStory() {
+    const blob = (title ? title + "\n\n" : "") + text;
+    navigator.clipboard && navigator.clipboard.writeText(blob);
+    setCopied(true); setTimeout(() => setCopied(false), 1600);
+  }
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Nunito:wght@400;600;700;800&display=swap');
+    .wd * { box-sizing:border-box; }
+    .wd { font-family:'Nunito',sans-serif; color:#15233b; min-height:100vh; padding:22px 16px 60px;
+      background: radial-gradient(900px 460px at 88% -6%, #efe6ff 0%, transparent 50%), radial-gradient(1000px 520px at 8% 0%, #d4ecff 0%, transparent 55%), radial-gradient(800px 520px at 50% 116%, #d9f5e6 0%, transparent 55%), #f4f9ff; }
+    .wd-wrap { max-width:720px; margin:0 auto; }
+    .wd-back { display:inline-block; text-decoration:none; color:#7a8aa3; font-weight:800; font-size:14px; margin-bottom:14px; }
+    .wd-back:hover { color:#7c5cf6; }
+    .wd-title { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:clamp(28px,7vw,44px); line-height:.98; letter-spacing:-1px; margin:0; }
+    .wd-title .hl { color:#7c5cf6; }
+    .wd-sub { font-weight:700; color:#7a8aa3; font-size:14px; margin:4px 0 18px; }
+
+    .wd-spark { background:#fff; border:2.5px solid #15233b; border-radius:22px; padding:20px 20px 18px; box-shadow:8px 8px 0 #7c5cf6; position:relative; overflow:hidden; }
+    .wd-spark .wm { position:absolute; right:-6px; bottom:-30px; font-size:120px; opacity:.08; }
+    .wd-spark .lab { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:.6px; font-size:12px; color:#7c5cf6; }
+    .wd-prompt { font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:clamp(19px,4.4vw,24px); line-height:1.35; margin:8px 0 0; position:relative; }
+    .wd-senses { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; position:relative; }
+    .wd-sense { background:#eef3fb; border-radius:999px; padding:6px 12px; font-weight:700; font-size:13px; color:#5b6b82; }
+    .wd-tip { margin-top:14px; background:#f1ecfe; border-radius:14px; padding:11px 14px; font-weight:700; font-size:14px; color:#6a4fce; position:relative; }
+    .wd-spark-btn { margin-top:14px; font-family:'Nunito',sans-serif; font-weight:800; font-size:14px; border:2px solid #7c5cf6; background:#fff; color:#7c5cf6; padding:9px 16px; border-radius:12px; cursor:pointer; box-shadow:0 3px 0 #d9ccff; position:relative; }
+    .wd-spark-btn:active { transform:translateY(2px); box-shadow:0 1px 0 #d9ccff; }
+
+    .wd-studio { background:#fff; border:2.5px solid #15233b; border-radius:22px; padding:20px; box-shadow:8px 8px 0 #2f7ef0; margin-top:22px; }
+    .wd-input { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:20px; width:100%; border:none; border-bottom:2.5px dashed #e2ebf6; padding:6px 2px 10px; margin-bottom:14px; color:#15233b; outline:none; background:transparent; }
+    .wd-input::placeholder { color:#c2cee0; }
+    .wd-area { font-family:'Nunito',sans-serif; font-size:16px; line-height:1.6; width:100%; min-height:240px; border:2px solid #e2ebf6; border-radius:14px; padding:14px; color:#15233b; outline:none; resize:vertical; }
+    .wd-area:focus { border-color:#2f7ef0; }
+
+    .wd-meter-row { display:flex; align-items:center; justify-content:space-between; margin-top:14px; gap:12px; }
+    .wd-count { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:18px; }
+    .wd-msg { font-weight:700; font-size:13px; }
+    .wd-bar { height:10px; background:#eef3fb; border-radius:99px; overflow:hidden; margin-top:8px; border:1px solid #e2ebf6; }
+    .wd-bar > i { display:block; height:100%; border-radius:99px; transition:width .3s, background .3s; }
+
+    .wd-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .wd-btn { font-family:'Nunito',sans-serif; font-weight:800; font-size:15px; border:2.5px solid #15233b; background:#fff; padding:11px 18px; border-radius:14px; cursor:pointer; box-shadow:0 4px 0 #15233b; }
+    .wd-btn:active { transform:translateY(3px); box-shadow:0 1px 0 #15233b; }
+    .wd-btn.primary { background:#2f7ef0; color:#fff; }
+    .wd-btn.ghost { border-color:#e2ebf6; box-shadow:0 4px 0 #e2ebf6; color:#5b6b82; }
+
+    .wd-section { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:16px; margin:30px 0 10px; color:#5b6b82; }
+    .wd-list { display:flex; flex-direction:column; gap:10px; }
+    .wd-draft { display:flex; align-items:center; justify-content:space-between; gap:12px; background:#fff; border:2px solid #e2ebf6; border-radius:14px; padding:12px 14px; }
+    .wd-draft .meta { min-width:0; }
+    .wd-draft .nm { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .wd-draft .info { font-size:12px; font-weight:700; color:#9aa9bf; }
+    .wd-draft .row { display:flex; gap:8px; flex:none; }
+    .wd-mini { border:2px solid #e2ebf6; background:#fff; border-radius:10px; padding:7px 12px; font-weight:800; font-size:13px; cursor:pointer; box-shadow:0 2px 0 #e2ebf6; }
+    .wd-mini.del { color:#e0553b; border-color:#f6d6cf; box-shadow:0 2px 0 #f6d6cf; }
+    .wd-empty { color:#9aa9bf; font-weight:700; font-size:14px; padding:8px 2px; }
+    .wd-flash { color:#15a371; font-weight:800; font-size:14px; align-self:center; }
+  `;
+
+  return (
+    <div className="wd">
+      <style>{css}</style>
+      <div className="wd-wrap">
+        <a className="wd-back" href="index.html">← GOAT Goals</a>
+        <h1 className="wd-title">Writer's <span className="hl">Den</span> 🪶</h1>
+        <div className="wd-sub">Spark an idea · write your story · aim for up to 500 words</div>
+
+        <div className="wd-spark">
+          <div className="wm">🪶</div>
+          <div className="lab">Today's story spark</div>
+          <p className="wd-prompt">{prompt}</p>
+          <div className="wd-senses">
+            <span className="wd-sense">👀 What can you see?</span>
+            <span className="wd-sense">👂 What can you hear?</span>
+            <span className="wd-sense">✋ What can you smell or feel?</span>
+          </div>
+          <div className="wd-tip">✨ Make it sparkle: {tip}</div>
+          <button className="wd-spark-btn" onClick={newSpark}>🎲 New spark</button>
+        </div>
+
+        <div className="wd-studio">
+          <input className="wd-input" placeholder="Give your story a title…" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <textarea className="wd-area" placeholder="Once upon a time…" value={text} onChange={(e) => setText(e.target.value)} />
+
+          <div className="wd-meter-row">
+            <div className="wd-count" style={{ color: meterColor }}>{count} <span style={{ color: "#c2cee0", fontSize: 14 }}>/ 500 words</span></div>
+            <div className="wd-msg" style={{ color: meterColor }}>{meterMsg}</div>
+          </div>
+          <div className="wd-bar"><i style={{ width: pct + "%", background: meterColor }} /></div>
+
+          <div className="wd-actions">
+            <button className="wd-btn primary" onClick={save}>💾 Save story</button>
+            <button className="wd-btn ghost" onClick={startNew}>＋ New story</button>
+            <button className="wd-btn ghost" onClick={copyStory}>{copied ? "Copied!" : "📋 Copy"}</button>
+            {justSaved && <span className="wd-flash">Saved ✓</span>}
+          </div>
+        </div>
+
+        <div className="wd-section">My stories ({drafts.length})</div>
+        <div className="wd-list">
+          {drafts.length === 0 && <div className="wd-empty">Nothing saved yet — write something and press Save. 🖊️</div>}
+          {drafts.slice().sort((a, b) => b.updated - a.updated).map((d) => (
+            <div className="wd-draft" key={d.id}>
+              <div className="meta">
+                <div className="nm">{d.title}</div>
+                <div className="info">{wordCount(d.text)} words · {new Date(d.updated).toLocaleDateString()}</div>
+              </div>
+              <div className="row">
+                <button className="wd-mini" onClick={() => loadDraft(d)}>Open</button>
+                <button className="wd-mini del" onClick={() => deleteDraft(d.id)}>Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<WritersDen />);
+</script>
+</body>
+</html>
