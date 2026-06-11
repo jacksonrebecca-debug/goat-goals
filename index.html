@@ -8,9 +8,9 @@
 
 <!-- =====================================================================
      EDIT YOUR LINKS HERE
-     Each card is an <a href="...">. To point a card at a game:
+     Each card is an <a href="...">.
        • A file in THIS repo:   href="goat-maths.html"
-       • Somewhere else:        href="https://your-other-site/..."
+       • An outside website:    href="https://..."   (add target="_blank")
      To add a game, copy a whole <a class="card"> ... </a> block.
 ===================================================================== -->
 
@@ -27,15 +27,16 @@
       #f4f9ff;
     position:relative; overflow-x:hidden;
   }
-  .wrap { max-width:860px; margin:0 auto; position:relative; z-index:1; }
+  .wrap { max-width:880px; margin:0 auto; position:relative; z-index:1; }
   .goat { position:absolute; top:-30px; right:-4px; font-size:62px; animation:bob 3s ease-in-out infinite; }
   @keyframes bob { 0%,100%{transform:translateY(0) rotate(-4deg);} 50%{transform:translateY(-10px) rotate(4deg);} }
   .eyebrow { font-weight:800; letter-spacing:2.5px; text-transform:uppercase; font-size:12px; color:#f5a623; margin-bottom:8px; }
   h1 { font-family:'Bricolage Grotesque',sans-serif; font-weight:900; font-size:clamp(40px,10vw,80px); line-height:.92; letter-spacing:-2px; margin:0; }
   h1 .hl { color:#2f7ef0; }
-  .lede { font-size:clamp(16px,2.6vw,19px); font-weight:600; color:#5b6b82; margin:16px 0 0; max-width:540px; line-height:1.5; }
+  .lede { font-size:clamp(16px,2.6vw,19px); font-weight:600; color:#5b6b82; margin:16px 0 0; max-width:560px; line-height:1.5; }
   .lede b { color:#f5a623; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:18px; margin-top:40px; }
+  .sectionhead { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:18px; color:#5b6b82; margin:38px 0 2px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:18px; margin-top:16px; }
   .card { position:relative; display:flex; flex-direction:column; gap:6px; text-decoration:none; color:#15233b;
     background:#fff; border:2.5px solid #15233b; border-radius:24px; padding:24px 22px 22px;
     box-shadow:7px 7px 0 var(--accent); transition:transform .12s ease, box-shadow .12s ease; overflow:hidden; }
@@ -61,27 +62,58 @@
     <h1>GOAT <span class="hl">Goals</span></h1>
     <p class="lede">Greatest Of All Time. Pick a challenge, climb a little higher every day, and reach the <b>summit</b> by the end of summer.</p>
 
+    <div class="sectionhead">Daily challenges</div>
     <div class="grid">
 
-      <!-- ===== GOAT Maths (working) ===== -->
       <a class="card" href="goat-maths.html" style="--accent:#2f7ef0; --soft:#dbeafe;">
         <div class="wm">🐐</div>
         <div class="glyph">🏔️</div>
         <span class="tag">Maths · daily</span>
         <h2>GOAT Maths</h2>
-        <p>One challenge a day for 9 weeks — times tables, fractions, brain teasers and fun ones. Build your streak to the summit.</p>
-        <div class="go">Start today's challenge →</div>
+        <p>Times tables, fractions, brain teasers and fun ones — one a day for 9 weeks.</p>
+        <div class="go">Today's challenge →</div>
       </a>
 
-      <!-- ===== Add more games here ===== -->
-      <div class="card soon" style="--accent:#15a371; --soft:#d2f3e4;">
-        <div class="wm">⚡</div>
-        <div class="glyph">🛠️</div>
-        <span class="tag">More soon</span>
-        <h2>Add a challenge</h2>
-        <p>Drop a new HTML file in this folder and point a card at it.</p>
-        <div class="go">Coming soon</div>
-      </div>
+      <a class="card" href="goat-english.html" style="--accent:#15a371; --soft:#d2f3e4;">
+        <div class="wm">✍️</div>
+        <div class="glyph">📖</div>
+        <span class="tag">English · daily</span>
+        <h2>GOAT English</h2>
+        <p>Parts of speech, super-charged phrases, and up-levelling words with synonyms and antonyms.</p>
+        <div class="go">Today's challenge →</div>
+      </a>
+
+      <a class="card" href="writers-den.html" style="--accent:#7c5cf6; --soft:#e7defe;">
+        <div class="wm">🪶</div>
+        <div class="glyph">🪶</div>
+        <span class="tag">Writing · daily</span>
+        <h2>Writer's Den</h2>
+        <p>Daily story sparks and a place to write your 500-word competition entries.</p>
+        <div class="go">Open the den →</div>
+      </a>
+
+    </div>
+
+    <div class="sectionhead">Real competitions to aim for 🏆</div>
+    <div class="grid">
+
+      <a class="card" href="https://www.henharrierday.uk/get-involved/young-wild-writers/" target="_blank" rel="noopener" style="--accent:#f5681e; --soft:#ffe2d1;">
+        <div class="wm">🦅</div>
+        <div class="glyph">🌍</div>
+        <span class="tag">Enter this summer</span>
+        <h2>Young Wild Writers</h2>
+        <p>Theme: <b>Our Shared Planet</b>. A story, poem or letter up to 500 words. Ages 9–12 (Junior). Deadline: <b>26 July 2026</b>.</p>
+        <div class="go">See how to enter →</div>
+      </a>
+
+      <a class="card" href="https://www.bbc.co.uk/teach/500-words" target="_blank" rel="noopener" style="--accent:#2f7ef0; --soft:#dbeafe;">
+        <div class="wm">📚</div>
+        <div class="glyph">✨</div>
+        <span class="tag">Get ready · opens autumn</span>
+        <h2>BBC 500 Words</h2>
+        <p>The UK's biggest story competition. Any story, up to 500 words — creativity matters, not spelling. Opens again in the autumn.</p>
+        <div class="go">Read the guide →</div>
+      </a>
 
     </div>
 
