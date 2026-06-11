@@ -194,6 +194,8 @@ function WritersDen() {
     .wd-mini.del { color:#e0553b; border-color:#f6d6cf; box-shadow:0 2px 0 #f6d6cf; }
     .wd-empty { color:#9aa9bf; font-weight:700; font-size:14px; padding:8px 2px; }
     .wd-flash { color:#15a371; font-weight:800; font-size:14px; align-self:center; }
+    .wd-savenote { margin-top:14px; background:#fff7e6; border:1.5px solid #ffe2b0; border-radius:12px; padding:10px 13px; font-size:13px; font-weight:700; color:#9a7b2e; line-height:1.45; }
+    .wd-savenote b { color:#7a6020; }
   `;
 
   return (
@@ -233,6 +235,7 @@ function WritersDen() {
             <button className="wd-btn ghost" onClick={copyStory}>{copied ? "Copied!" : "📋 Copy"}</button>
             {justSaved && <span className="wd-flash">Saved ✓</span>}
           </div>
+          <div className="wd-savenote">💡 Your stories save in this browser. When a story is finished, tap <b>📋 Copy</b> and paste it somewhere safe — an email to a grown-up, or a Google Doc — so it can never get lost.</div>
         </div>
 
         <div className="wd-section">My stories ({drafts.length})</div>
