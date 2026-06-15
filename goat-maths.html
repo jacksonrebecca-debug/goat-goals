@@ -33,84 +33,84 @@ const { useState, useEffect, useRef } = React;
 
 const QUESTIONS = [
   // ---- Week 1 ----
-  { day: 1, type: "Fractions", diff: 1, q: "What is 1/2 of 18?", hint: "Split 18 into two equal piles.", answer: "9", why: "18 ÷ 2 = 9." },
-  { day: 2, type: "Number Power", diff: 1, q: "What is 6 × 7?", hint: "Six lots of seven.", answer: "42", why: "6 × 7 = 42." },
-  { day: 3, type: "Brain Teaser", diff: 2, q: "I think of a number, double it, then add 3, and I get 17. What was my number?", hint: "Work backwards: undo the +3 first, then the doubling.", answer: "7", why: "17 − 3 = 14, and 14 ÷ 2 = 7." },
-  { day: 4, type: "Fun", diff: 1, q: "What number comes next? 5, 10, 15, 20, …", hint: "Counting up in 5s.", answer: "25", why: "20 + 5 = 25." },
-  { day: 5, type: "Fractions", diff: 2, q: "What is 3/4 of 12?", hint: "Find a quarter of 12 first, then take 3 of them.", answer: "9", why: "12 ÷ 4 = 3, and 3 × 3 = 9." },
-  { day: 6, type: "Brain Teaser", diff: 2, q: "Two numbers multiply together to make 12, and they add up to 7. What are the two numbers?", hint: "List pairs that multiply to 12: 1&12, 2&6, 3&4 — which pair adds to 7?", answer: "3 and 4", why: "3 × 4 = 12 and 3 + 4 = 7." },
-  { day: 7, type: "Number Power", diff: 1, q: "What goes in the box?  ▢ + 6 = 14", hint: "What do you add to 6 to make 14?", answer: "8", why: "14 − 6 = 8." },
+  { day: 1, type: "Fractions", diff: 1, q: "What is 1/2 of 24?", hint: "Split 24 into two equal piles.", answer: "12", why: "24 ÷ 2 = 12." },
+  { day: 2, type: "Number Power", diff: 2, q: "What is 7 × 8?", hint: "Seven eights.", answer: "56", why: "7 × 8 = 56." },
+  { day: 3, type: "Brain Teaser", diff: 3, q: "I think of a number, double it, then add 3, and I get 17. What was my number?", hint: "Work backwards: undo the +3 first, then the doubling.", answer: "7", why: "17 − 3 = 14, and 14 ÷ 2 = 7." },
+  { day: 4, type: "Fun", diff: 2, q: "What number comes next? 2, 4, 8, 16, 32, …", hint: "Each number is double the one before.", answer: "64", why: "32 × 2 = 64." },
+  { day: 5, type: "Fractions", diff: 3, q: "What is 3/4 of 16?", hint: "Find a quarter of 16, then take 3 of them.", answer: "12", why: "16 ÷ 4 = 4, and 4 × 3 = 12." },
+  { day: 6, type: "Brain Teaser", diff: 3, q: "Two numbers multiply together to make 12, and they add up to 7. What are the two numbers?", hint: "List pairs that multiply to 12: 1&12, 2&6, 3&4 — which adds to 7?", answer: "3 and 4", why: "3 × 4 = 12 and 3 + 4 = 7." },
+  { day: 7, type: "Number Power", diff: 3, q: "Work out:  3 + 4 × 5", hint: "Do the multiplying BEFORE the adding.", answer: "23", why: "4 × 5 = 20 first, then 3 + 20 = 23. (Multiply before you add!)" },
 
   // ---- Week 2 ----
-  { day: 8, type: "Fractions", diff: 1, q: "What is 1/4 of 20?", hint: "Split 20 into 4 equal groups.", answer: "5", why: "20 ÷ 4 = 5." },
-  { day: 9, type: "Brain Teaser", diff: 2, q: "24 grapes are shared equally between 4 children. Then 2 more children arrive and they re-share fairly. How many grapes does each child get now?", hint: "How many children share the 24 grapes now?", answer: "4 grapes each", why: "Now 6 children share 24 grapes: 24 ÷ 6 = 4." },
-  { day: 10, type: "Number Power", diff: 2, q: "What is 9 × 4?", hint: "Nine fours.", answer: "36", why: "9 × 4 = 36." },
-  { day: 11, type: "Fractions", diff: 2, q: "What is 2/3 of 9?", hint: "Find a third of 9 first, then take 2 of them.", answer: "6", why: "9 ÷ 3 = 3, and 3 × 2 = 6." },
-  { day: 12, type: "Fun", diff: 2, q: "A spider has 8 legs. How many legs do 4 spiders have altogether?", hint: "4 lots of 8.", answer: "32", why: "4 × 8 = 32." },
-  { day: 13, type: "Brain Teaser", diff: 3, q: "In a field there are chickens (2 legs each) and sheep (4 legs each). There are 8 heads and 22 legs altogether. How many sheep are there?", hint: "If all 8 were chickens that's 16 legs. Each sheep adds 2 extra legs.", answer: "3 sheep", why: "8 chickens would be 16 legs. There are 22 − 16 = 6 extra legs, and each sheep adds 2: 6 ÷ 2 = 3 sheep (and 5 chickens)." },
-  { day: 14, type: "Fractions", diff: 2, q: "There are 24 sweets in a jar. You eat 1/3 of them. How many sweets are LEFT?", hint: "First work out 1/3 of 24, then take it away.", answer: "16", why: "1/3 of 24 is 8, and 24 − 8 = 16." },
+  { day: 8, type: "Fractions", diff: 3, q: "What is 2/5 of 20?", hint: "Find 1/5 of 20 first, then take 2 of them.", answer: "8", why: "20 ÷ 5 = 4, and 4 × 2 = 8." },
+  { day: 9, type: "Brain Teaser", diff: 3, q: "24 grapes are shared equally between 4 children. Then 2 more children arrive and they re-share fairly. How many grapes does each child get now?", hint: "How many children share the 24 grapes now?", answer: "4 grapes each", why: "Now 6 children share 24: 24 ÷ 6 = 4." },
+  { day: 10, type: "Number Power", diff: 3, q: "What is 9 × 6?", hint: "Nine sixes — one less than nine sevens? No: 6 less than 9 tens.", answer: "54", why: "9 × 6 = 54." },
+  { day: 11, type: "Fractions", diff: 4, q: "What is 3/4 of 36?", hint: "Find a quarter of 36, then take 3 of them.", answer: "27", why: "36 ÷ 4 = 9, and 9 × 3 = 27." },
+  { day: 12, type: "Fun", diff: 3, q: "A spider has 8 legs. How many legs do 7 spiders have altogether?", hint: "7 lots of 8.", answer: "56", why: "7 × 8 = 56." },
+  { day: 13, type: "Brain Teaser", diff: 5, q: "In a field there are chickens (2 legs each) and sheep (4 legs each). There are 8 heads and 22 legs altogether. How many sheep are there?", hint: "If all 8 were chickens that's 16 legs. Each sheep adds 2 extra legs.", answer: "3 sheep", why: "8 chickens = 16 legs. There are 22 − 16 = 6 extra legs, and each sheep adds 2: 6 ÷ 2 = 3 sheep (with 5 chickens)." },
+  { day: 14, type: "Fractions", diff: 3, q: "There are 24 sweets in a jar. You eat 1/3 of them. How many are LEFT?", hint: "Work out 1/3 of 24 first, then take it away.", answer: "16", why: "1/3 of 24 is 8, and 24 − 8 = 16." },
 
   // ---- Week 3 ----
-  { day: 15, type: "Number Power", diff: 2, q: "What is 8 × 8?", hint: "Eight eights — a tricky one to learn.", answer: "64", why: "8 × 8 = 64." },
-  { day: 16, type: "Fractions", diff: 2, q: "What is 1/3 of 18?", hint: "Split 18 into 3 equal groups.", answer: "6", why: "18 ÷ 3 = 6." },
-  { day: 17, type: "Brain Teaser", diff: 2, q: "Ben is twice as old as Sam. Together they are 12. How old is each of them?", hint: "Think of Sam as 1 part and Ben as 2 parts — that's 3 parts making 12.", answer: "Sam is 4, Ben is 8", why: "3 parts = 12, so 1 part = 4. Sam = 4, Ben = 2 × 4 = 8." },
-  { day: 18, type: "Fun", diff: 2, q: "What number comes next? 1, 2, 4, 8, 16, …", hint: "Each number is double the one before.", answer: "32", why: "16 × 2 = 32." },
-  { day: 19, type: "Fractions", diff: 3, q: "Half of a mystery number is 9. What is the whole number?", hint: "If half is 9, the whole is two halves.", answer: "18", why: "9 + 9 = 18, so the number is 18." },
-  { day: 20, type: "Brain Teaser", diff: 2, q: "I have 5 coins that add up to 17p. What could the 5 coins be?", hint: "Try starting with a 10p, then make up 7p with four more coins.", answer: "10p, 2p, 2p, 2p, 1p", why: "10 + 2 + 2 + 2 + 1 = 17p, using 5 coins. (Other answers are possible too!)" },
-  { day: 21, type: "Number Power", diff: 1, q: "What is 50 ÷ 5?", hint: "How many 5s fit into 50?", answer: "10", why: "5 × 10 = 50." },
+  { day: 15, type: "Number Power", diff: 3, q: "What is 8 × 8?", hint: "Eight eights.", answer: "64", why: "8 × 8 = 64." },
+  { day: 16, type: "Fractions", diff: 3, q: "What is 1/3 of 27?", hint: "Split 27 into 3 equal groups.", answer: "9", why: "27 ÷ 3 = 9." },
+  { day: 17, type: "Brain Teaser", diff: 4, q: "Ben is twice as old as Sam. Together they are 12. How old is each of them?", hint: "Think of Sam as 1 part and Ben as 2 parts — 3 parts make 12.", answer: "Sam is 4, Ben is 8", why: "3 parts = 12, so 1 part = 4. Sam = 4, Ben = 8." },
+  { day: 18, type: "Fun", diff: 3, q: "What number comes next? 1, 3, 6, 10, 15, …", hint: "Look at the jumps: +2, +3, +4, +5 …", answer: "21", why: "Each jump grows by one, so the next jump is +6: 15 + 6 = 21. (These are triangular numbers.)" },
+  { day: 19, type: "Fractions", diff: 4, q: "What is 3/5 of 35?", hint: "Find 1/5 of 35 first, then take 3 of them.", answer: "21", why: "35 ÷ 5 = 7, and 7 × 3 = 21." },
+  { day: 20, type: "Brain Teaser", diff: 4, q: "I have 5 coins that add up to 17p. What could the 5 coins be?", hint: "Try a 10p, then make up 7p with four more coins.", answer: "10p, 2p, 2p, 2p, 1p", why: "10 + 2 + 2 + 2 + 1 = 17p, using 5 coins. (Other answers work too!)" },
+  { day: 21, type: "Number Power", diff: 3, q: "What is 56 ÷ 7?", hint: "What times 7 makes 56?", answer: "8", why: "7 × 8 = 56." },
 
   // ---- Week 4 ----
-  { day: 22, type: "Fractions", diff: 2, q: "What is 2/5 of 20?", hint: "Find 1/5 of 20 first, then take 2 of them.", answer: "8", why: "20 ÷ 5 = 4, and 4 × 2 = 8." },
-  { day: 23, type: "Brain Teaser", diff: 3, q: "I think of a number, take away 4, then double what's left, and get 10. What was my number?", hint: "Work backwards: undo the doubling first (half of 10), then undo the −4.", answer: "9", why: "10 ÷ 2 = 5, and 5 + 4 = 9. (Check: 9 − 4 = 5, 5 × 2 = 10.)" },
-  { day: 24, type: "Number Power", diff: 2, q: "What is 7 × 6?", hint: "Seven sixes.", answer: "42", why: "7 × 6 = 42." },
-  { day: 25, type: "Fractions", diff: 2, q: "What is 3/4 of 20?", hint: "Find a quarter of 20, then take 3 of them.", answer: "15", why: "20 ÷ 4 = 5, and 5 × 3 = 15." },
-  { day: 26, type: "Fun", diff: 2, q: "How many days are there in 3 weeks?", hint: "One week is 7 days.", answer: "21", why: "7 × 3 = 21." },
-  { day: 27, type: "Brain Teaser", diff: 2, q: "Can you make exactly 3p using only 2p coins? Why or why not?", hint: "What kind of totals do you always get from 2p coins?", answer: "No", why: "2p coins only ever make even amounts (2, 4, 6…). 3 is odd, so it's impossible." },
-  { day: 28, type: "Fractions", diff: 2, q: "A class has 30 children. 2/5 of them walk to school. How many children walk?", hint: "Find 1/5 of 30 first, then take 2 of them.", answer: "12", why: "30 ÷ 5 = 6, and 6 × 2 = 12." },
+  { day: 22, type: "Fractions", diff: 4, q: "What is 2/3 of 48?", hint: "Find 1/3 of 48 first, then take 2 of them.", answer: "32", why: "48 ÷ 3 = 16, and 16 × 2 = 32." },
+  { day: 23, type: "Brain Teaser", diff: 4, q: "I think of a number, take away 4, then double what's left, and get 10. What was my number?", hint: "Work backwards: halve the 10 first, then undo the −4.", answer: "9", why: "10 ÷ 2 = 5, and 5 + 4 = 9. (Check: 9 − 4 = 5, 5 × 2 = 10.)" },
+  { day: 24, type: "Number Power", diff: 4, q: "What is 12 × 12?", hint: "12 × 12 = 12 × 10 + 12 × 2.", answer: "144", why: "120 + 24 = 144." },
+  { day: 25, type: "Fractions", diff: 4, q: "What is 3/4 of 48?", hint: "Find a quarter of 48, then take 3 of them.", answer: "36", why: "48 ÷ 4 = 12, and 12 × 3 = 36." },
+  { day: 26, type: "Fun", diff: 2, q: "How many days are there in 4 weeks?", hint: "One week is 7 days.", answer: "28", why: "7 × 4 = 28." },
+  { day: 27, type: "Brain Teaser", diff: 4, q: "Can you make exactly 3p using only 2p coins? Why or why not?", hint: "What kind of totals do 2p coins always make?", answer: "No", why: "2p coins only ever make even amounts (2, 4, 6…). 3 is odd, so it's impossible." },
+  { day: 28, type: "Fractions", diff: 4, q: "A class has 35 children. 2/5 of them walk to school. How many children walk?", hint: "Find 1/5 of 35 first, then take 2 of them.", answer: "14", why: "35 ÷ 5 = 7, and 7 × 2 = 14." },
 
   // ---- Week 5 ----
-  { day: 29, type: "Number Power", diff: 3, q: "What goes in the box?  ▢ × 4 = 28", hint: "What times 4 makes 28?", answer: "7", why: "28 ÷ 4 = 7." },
-  { day: 30, type: "Fractions", diff: 2, q: "What is 1/3 of 24?", hint: "Split 24 into 3 equal groups.", answer: "8", why: "24 ÷ 3 = 8." },
-  { day: 31, type: "Brain Teaser", diff: 3, q: "Sam has only 20p and 10p coins. He has 5 coins, and they add up to 80p. How many of each coin does he have?", hint: "Try 3 twenties and see what's left to make with tens.", answer: "Three 20p and two 10p", why: "3 × 20 = 60 and 2 × 10 = 20, total 80p — and that's 5 coins." },
-  { day: 32, type: "Fun", diff: 2, q: "How many sides does a hexagon have?", hint: "\"Hex\" is a clue.", answer: "6", why: "A hexagon has 6 sides." },
-  { day: 33, type: "Fractions", diff: 2, q: "What is 2/3 of 15?", hint: "Find a third of 15 first, then take 2 of them.", answer: "10", why: "15 ÷ 3 = 5, and 5 × 2 = 10." },
-  { day: 34, type: "Brain Teaser", diff: 2, q: "Three numbers in a row add up to 15. The middle number is 5 and the first is 4. What is the last number?", hint: "4 + 5 + ? = 15.", answer: "6", why: "4 + 5 = 9, and 15 − 9 = 6." },
-  { day: 35, type: "Number Power", diff: 2, q: "What is 100 ÷ 4?", hint: "Half of 100 is 50; half again is…", answer: "25", why: "100 ÷ 4 = 25." },
+  { day: 29, type: "Number Power", diff: 4, q: "What goes in the box?  ▢ × 6 = 48", hint: "What times 6 makes 48?", answer: "8", why: "48 ÷ 6 = 8." },
+  { day: 30, type: "Fractions", diff: 3, q: "What is 1/4 of 32?", hint: "Split 32 into 4 equal groups.", answer: "8", why: "32 ÷ 4 = 8." },
+  { day: 31, type: "Brain Teaser", diff: 5, q: "Sam has only 20p and 10p coins. He has 5 coins, and they add up to 80p. How many of each coin does he have?", hint: "Try 3 twenties, then see what's left to make with tens.", answer: "Three 20p and two 10p", why: "3 × 20 = 60 and 2 × 10 = 20, total 80p — and that's 5 coins." },
+  { day: 32, type: "Fun", diff: 3, q: "How many edges does a cube have?", hint: "Count the edges of a dice — top, bottom and around the middle.", answer: "12", why: "A cube has 12 edges (4 on top, 4 on the bottom, 4 connecting them)." },
+  { day: 33, type: "Fractions", diff: 4, q: "What is 5/6 of 36?", hint: "Find 1/6 of 36 first, then take 5 of them.", answer: "30", why: "36 ÷ 6 = 6, and 6 × 5 = 30." },
+  { day: 34, type: "Brain Teaser", diff: 4, q: "Three numbers in a row (consecutive) add up to 30. What are the three numbers?", hint: "The middle number is 30 ÷ 3.", answer: "9, 10 and 11", why: "The middle is 30 ÷ 3 = 10, so the numbers are 9, 10, 11." },
+  { day: 35, type: "Number Power", diff: 4, q: "What is 96 ÷ 8?", hint: "How many 8s make 96? Try 8 × 10 = 80, then keep going.", answer: "12", why: "8 × 12 = 96." },
 
   // ---- Week 6 ----
-  { day: 36, type: "Fractions", diff: 2, q: "What is 1/5 of 25?", hint: "Split 25 into 5 equal groups.", answer: "5", why: "25 ÷ 5 = 5." },
-  { day: 37, type: "Brain Teaser", diff: 3, q: "A pattern goes 1, 3, 6, 10, 15, … What number comes next, and what is the rule?", hint: "Look at the jumps: +2, +3, +4, +5 …", answer: "21", why: "Each jump is one bigger than the last, so the next jump is +6: 15 + 6 = 21." },
-  { day: 38, type: "Number Power", diff: 2, q: "What is 6 × 9?", hint: "Six nines — one less than six tens.", answer: "54", why: "6 × 9 = 60 − 6 = 54." },
-  { day: 39, type: "Fractions", diff: 3, q: "What is 5/6 of 12?", hint: "Find 1/6 of 12 first, then take 5 of them.", answer: "10", why: "12 ÷ 6 = 2, and 2 × 5 = 10." },
-  { day: 40, type: "Brain Teaser", diff: 2, q: "A book costs £5. A pen costs £2 less than the book. How much do a book and a pen cost together?", hint: "Work out the pen's price first.", answer: "£8", why: "The pen is £5 − £2 = £3, and £5 + £3 = £8." },
-  { day: 41, type: "Fractions", diff: 2, q: "There are 20 cars in a car park. 1/4 of them are red. How many cars are NOT red?", hint: "Work out how many ARE red first.", answer: "15", why: "1/4 of 20 is 5 red cars, so 20 − 5 = 15 are not red." },
-  { day: 42, type: "Fun", diff: 2, q: "How many months of the year have 31 days?", hint: "Use the knuckle trick if you know it!", answer: "7", why: "Jan, Mar, May, Jul, Aug, Oct and Dec — that's 7." },
+  { day: 36, type: "Fractions", diff: 4, q: "What is 7/10 of 90?", hint: "Find 1/10 of 90 first, then take 7 of them.", answer: "63", why: "90 ÷ 10 = 9, and 9 × 7 = 63." },
+  { day: 37, type: "Brain Teaser", diff: 5, q: "I'm a number. I'm odd, I'm a multiple of 3, I'm less than 20, and my two digits add up to 6. What number am I?", hint: "Multiples of 3 under 20: 3, 6, 9, 12, 15, 18. Which is odd AND has digits adding to 6?", answer: "15", why: "15 is odd, a multiple of 3, under 20, and 1 + 5 = 6." },
+  { day: 38, type: "Number Power", diff: 4, q: "What is 11 × 12?", hint: "11 × 12 = 12 × 10 + 12 × 1.", answer: "132", why: "120 + 12 = 132." },
+  { day: 39, type: "Fractions", diff: 5, q: "What is 7/8 of 40?", hint: "Find 1/8 of 40 first, then take 7 of them.", answer: "35", why: "40 ÷ 8 = 5, and 5 × 7 = 35." },
+  { day: 40, type: "Brain Teaser", diff: 4, q: "A book costs £8. A pen costs a quarter of the book's price. How much do a book and a pen cost together?", hint: "Work out a quarter of £8 first.", answer: "£10", why: "A quarter of £8 is £2 (the pen), and £8 + £2 = £10." },
+  { day: 41, type: "Fractions", diff: 4, q: "There are 20 cars in a car park. 1/4 of them are red. How many cars are NOT red?", hint: "Work out how many ARE red first.", answer: "15", why: "1/4 of 20 is 5 red cars, so 20 − 5 = 15 are not red." },
+  { day: 42, type: "Fun", diff: 3, q: "How many months of the year have 31 days?", hint: "Use the knuckle trick if you know it!", answer: "7", why: "Jan, Mar, May, Jul, Aug, Oct and Dec — that's 7." },
 
   // ---- Week 7 ----
-  { day: 43, type: "Number Power", diff: 3, q: "What is 11 × 11?", hint: "11 × 11 = 11 × 10 + 11.", answer: "121", why: "110 + 11 = 121." },
-  { day: 44, type: "Brain Teaser", diff: 3, q: "Two numbers multiply together to make 24, and they add up to 11. What are the two numbers?", hint: "List pairs that multiply to 24: 1&24, 2&12, 3&8, 4&6 — which adds to 11?", answer: "3 and 8", why: "3 × 8 = 24 and 3 + 8 = 11." },
-  { day: 45, type: "Fractions", diff: 2, q: "What is 3/5 of 30?", hint: "Find 1/5 of 30 first, then take 3 of them.", answer: "18", why: "30 ÷ 5 = 6, and 6 × 3 = 18." },
-  { day: 46, type: "Fun", diff: 2, q: "What is double 35?", hint: "Double 30, double 5, then add them.", answer: "70", why: "35 + 35 = 70." },
-  { day: 47, type: "Fractions", diff: 2, q: "What is 1/4 of 32?", hint: "Split 32 into 4 equal groups.", answer: "8", why: "32 ÷ 4 = 8." },
-  { day: 48, type: "Brain Teaser", diff: 3, q: "I'm a 2-digit number. My two digits add up to 5, I'm an even number, and I'm less than 25. What number am I?", hint: "List 2-digit numbers whose digits add to 5: 14, 23, 32, 41, 50. Which is even AND under 25?", answer: "14", why: "1 + 4 = 5, 14 is even, and 14 is less than 25." },
-  { day: 49, type: "Number Power", diff: 2, q: "What is 8 × 7?", hint: "Eight sevens (the famous tricky one!).", answer: "56", why: "8 × 7 = 56." },
+  { day: 43, type: "Number Power", diff: 4, q: "Work out:  (3 + 4) × 5", hint: "Do the part in the BRACKETS first.", answer: "35", why: "3 + 4 = 7 first (it's in brackets), then 7 × 5 = 35." },
+  { day: 44, type: "Brain Teaser", diff: 5, q: "Two numbers multiply together to make 24, and they add up to 11. What are the two numbers?", hint: "Pairs that multiply to 24: 1&24, 2&12, 3&8, 4&6 — which adds to 11?", answer: "3 and 8", why: "3 × 8 = 24 and 3 + 8 = 11." },
+  { day: 45, type: "Fractions", diff: 4, q: "What is 3/5 of 45?", hint: "Find 1/5 of 45 first, then take 3 of them.", answer: "27", why: "45 ÷ 5 = 9, and 9 × 3 = 27." },
+  { day: 46, type: "Fun", diff: 2, q: "What is half of 130?", hint: "Halve 100, halve 30, then add them.", answer: "65", why: "50 + 15 = 65." },
+  { day: 47, type: "Fractions", diff: 5, q: "What is 4/5 of 65?", hint: "Find 1/5 of 65 first, then take 4 of them.", answer: "52", why: "65 ÷ 5 = 13, and 13 × 4 = 52." },
+  { day: 48, type: "Brain Teaser", diff: 5, q: "I'm a 2-digit number. My two digits add up to 5, I'm even, and I'm less than 25. What number am I?", hint: "2-digit numbers whose digits add to 5: 14, 23, 32, 41, 50. Which is even AND under 25?", answer: "14", why: "1 + 4 = 5, 14 is even, and it's under 25." },
+  { day: 49, type: "Number Power", diff: 3, q: "What is 8 × 7?", hint: "Eight sevens.", answer: "56", why: "8 × 7 = 56." },
 
   // ---- Week 8 ----
-  { day: 50, type: "Fractions", diff: 3, q: "What is 7/10 of 20?", hint: "Find 1/10 of 20 first, then take 7 of them.", answer: "14", why: "20 ÷ 10 = 2, and 2 × 7 = 14." },
-  { day: 51, type: "Brain Teaser", diff: 3, q: "Four friends each shake hands once with every other friend. How many handshakes happen altogether?", hint: "The first person shakes 3 hands, the next shakes 2 NEW ones, then 1…", answer: "6", why: "3 + 2 + 1 = 6 handshakes." },
-  { day: 52, type: "Number Power", diff: 2, q: "What is 144 ÷ 12?", hint: "What times 12 makes 144?", answer: "12", why: "12 × 12 = 144." },
-  { day: 53, type: "Fractions", diff: 2, q: "What is 1/6 of 30?", hint: "Split 30 into 6 equal groups.", answer: "5", why: "30 ÷ 6 = 5." },
-  { day: 54, type: "Brain Teaser", diff: 2, q: "A mystery number doubled is 16. What is that same number TRIPLED?", hint: "Find the number first, then multiply it by 3.", answer: "24", why: "The number is 8 (because 8 × 2 = 16), and 8 × 3 = 24." },
-  { day: 55, type: "Fun", diff: 2, q: "In Roman numerals, what number is XII?", hint: "X is 10, and II is two more.", answer: "12", why: "X (10) + II (2) = 12." },
-  { day: 56, type: "Fractions", diff: 2, q: "There are 18 stickers. You give away 2/3 of them. How many stickers do you give away?", hint: "Find 1/3 of 18 first, then take 2 of them.", answer: "12", why: "18 ÷ 3 = 6, and 6 × 2 = 12." },
+  { day: 50, type: "Fractions", diff: 5, q: "What is 5/6 of 48?", hint: "Find 1/6 of 48 first, then take 5 of them.", answer: "40", why: "48 ÷ 6 = 8, and 8 × 5 = 40." },
+  { day: 51, type: "Brain Teaser", diff: 4, q: "Four friends each shake hands once with every other friend. How many handshakes happen altogether?", hint: "The first person shakes 3 hands, the next shakes 2 NEW ones, then 1…", answer: "6", why: "3 + 2 + 1 = 6 handshakes." },
+  { day: 52, type: "Number Power", diff: 4, q: "What is 144 ÷ 12?", hint: "What times 12 makes 144?", answer: "12", why: "12 × 12 = 144." },
+  { day: 53, type: "Fractions", diff: 4, q: "A coat costs £40. In a sale it has 1/4 off. What is the new price?", hint: "Work out 1/4 of £40, then take it off.", answer: "£30", why: "1/4 of £40 is £10 off, so £40 − £10 = £30." },
+  { day: 54, type: "Brain Teaser", diff: 4, q: "A mystery number doubled is 16. What is that same number TRIPLED?", hint: "Find the number first, then multiply by 3.", answer: "24", why: "The number is 8 (8 × 2 = 16), and 8 × 3 = 24." },
+  { day: 55, type: "Fun", diff: 3, q: "A rectangle is 6 cm long and 4 cm wide. What is its AREA?", hint: "Area of a rectangle = length × width.", answer: "24 cm²", why: "6 × 4 = 24 square centimetres." },
+  { day: 56, type: "Fractions", diff: 4, q: "There are 18 stickers. You give away 2/3 of them. How many do you give away?", hint: "Find 1/3 of 18 first, then take 2 of them.", answer: "12", why: "18 ÷ 3 = 6, and 6 × 2 = 12." },
 
   // ---- Week 9 ----
-  { day: 57, type: "Brain Teaser", diff: 3, q: "3 cats catch 3 mice in 3 minutes. How many cats are needed to catch 6 mice in 6 minutes?", hint: "How many mice can ONE cat catch in 6 minutes?", answer: "3 cats", why: "One cat catches 1 mouse in 3 minutes, so 2 mice in 6 minutes. 3 cats catch 6 mice in 6 minutes." },
-  { day: 58, type: "Number Power", diff: 2, q: "What is 9 × 9?", hint: "Nine nines — one less than nine tens.", answer: "81", why: "9 × 9 = 90 − 9 = 81." },
-  { day: 59, type: "Fractions", diff: 2, q: "What is 3/4 of 16?", hint: "Find a quarter of 16, then take 3 of them.", answer: "12", why: "16 ÷ 4 = 4, and 4 × 3 = 12." },
-  { day: 60, type: "Brain Teaser", diff: 3, q: "I think of a number, add 5, then halve the result, and get 6. What was my number?", hint: "Work backwards: double the 6 first, then undo the +5.", answer: "7", why: "6 × 2 = 12, and 12 − 5 = 7. (Check: 7 + 5 = 12, half of 12 = 6.)" },
-  { day: 61, type: "Fractions", diff: 2, q: "A pizza has 12 slices. You and 2 friends share it equally. What fraction does each person get, and how many slices is that?", hint: "How many people share the pizza?", answer: "1/3 each — 4 slices", why: "3 people share 12 slices: each gets 1/3, which is 12 ÷ 3 = 4 slices." },
-  { day: 62, type: "Brain Teaser", diff: 3, q: "Using the numbers 2, 3 and 4 and some × signs, can you make 24?", hint: "What is 2 × 3, and then × 4?", answer: "2 × 3 × 4 = 24", why: "2 × 3 = 6, and 6 × 4 = 24." },
+  { day: 57, type: "Brain Teaser", diff: 5, q: "3 cats catch 3 mice in 3 minutes. How many cats are needed to catch 6 mice in 6 minutes?", hint: "How many mice can ONE cat catch in 6 minutes?", answer: "3 cats", why: "One cat catches 1 mouse in 3 minutes, so 2 mice in 6 minutes. 3 cats catch 6 mice in 6 minutes." },
+  { day: 58, type: "Number Power", diff: 4, q: "Work out:  20 − 3 × 4", hint: "Do the multiplying first.", answer: "8", why: "3 × 4 = 12 first, then 20 − 12 = 8." },
+  { day: 59, type: "Fractions", diff: 3, q: "What is 3/4 of 24?", hint: "Find a quarter of 24, then take 3 of them.", answer: "18", why: "24 ÷ 4 = 6, and 6 × 3 = 18." },
+  { day: 60, type: "Brain Teaser", diff: 5, q: "I think of a number, add 5, then halve the result, and get 6. What was my number?", hint: "Work backwards: double the 6 first, then undo the +5.", answer: "7", why: "6 × 2 = 12, and 12 − 5 = 7. (Check: 7 + 5 = 12, half of 12 = 6.)" },
+  { day: 61, type: "Brain Teaser", diff: 5, q: "A pizza has 12 slices. Three friends share it, but one friend only wants 2 slices. The other two share the rest equally. How many slices do each of the other two get?", hint: "Take off the 2 slices first, then split what's left between 2 people.", answer: "5 slices each", why: "12 − 2 = 10 slices left, shared between 2 friends: 10 ÷ 2 = 5 each." },
+  { day: 62, type: "Brain Teaser", diff: 5, q: "Using the numbers 2, 3, 4 and 5 (each once) with + and × signs, can you make 23?", hint: "Try multiplying two pairs, then adding the results.", answer: "3 × 5 + 2 × 4 = 23", why: "3 × 5 = 15 and 2 × 4 = 8, and 15 + 8 = 23." },
   { day: 63, type: "Fun", diff: 1, q: "Final challenge! How many days are there in 9 weeks?", hint: "Days in a week × number of weeks.", answer: "63", why: "7 × 9 = 63 — one challenge for every day. You reached the summit! 🐐🏔️" },
 ];
 
@@ -246,7 +246,7 @@ function GoatMaths() {
           <span className="ggm-badge">{meta.glyph} {q.type}</span>
           <div className="ggm-day">DAY {q.day}{q.day === currentDay ? " · today" : q.day < currentDay ? " · catch-up" : " · coming up"}</div>
           <p className="ggm-q">{q.q}</p>
-          <div className="ggm-diff">Challenge level: <span className="dot">{"▲".repeat(q.diff)}</span><span style={{ color: "#e3eaf4" }}>{"▲".repeat(3 - q.diff)}</span></div>
+          <div className="ggm-diff">Challenge level: <span className="dot">{"▲".repeat(q.diff)}</span><span style={{ color: "#e3eaf4" }}>{"▲".repeat(5 - q.diff)}</span></div>
 
           <div className="ggm-actions">
             {burst > 0 && (
