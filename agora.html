@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AGORA · Big Questions for Big Thinkers</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>" />
+
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+<style>
+  html, body { margin: 0; height: 100%; background: #f6f1e6; }
+  #root { min-height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+/* ============================================================================
+   AGORA — big questions for big thinkers (ages ~9–12)
+   The game rewards good THINKING, not "right" answers. Add questions in QUESTIONS.
+   ========================================================================== */
+
+const QUESTIONS = [
+  { id:"lie", theme:"Truth", q:"Most people agree that lying is wrong. But imagine a friend gives you a present you really don't like, and asks if you love it. Is it ever OK to tell a lie?",
+    stances:["Never — honesty always wins","Sometimes, to be kind","Only to stop someone getting hurt"],
+    twist:"If little 'kind' lies are fine, how do we know where to stop? And would you want your friends lying to you 'to be kind'?",
+    who:"Aristotle", said:"Aristotle thought truthfulness is a habit you build up like a muscle. He also believed the right path usually sits between two extremes — not blurting out every harsh thought, but not living in fibs either.",
+    talk:"When is a lie really 'kind' — and when is it just easier?" },
+
+  { id:"ring", theme:"Right & Wrong", q:"Imagine a magic ring that makes you completely invisible. Nobody could ever know what you did. Would you still behave well — or take whatever you wanted?",
+    stances:["Exactly the same","A bit naughtier","Honestly… not sure"],
+    twist:"If you'd act differently while invisible, were you being good before — or just careful not to get caught?",
+    who:"Plato & Socrates", said:"An old Greek story (told by Plato) asks exactly this — the Ring of Gyges. Socrates argued that a truly good person stays good even when no one is watching, because being fair makes your own life better.",
+    talk:"Is someone good if they only behave when they might get caught?" },
+
+  { id:"fair", theme:"Fairness", q:"There's one last slice of cake and two of you want it. What is the fairest way to decide who gets it?",
+    stances:["Split it exactly in half","Whoever wants it most","One cuts, the other chooses"],
+    twist:"'One cuts, the other picks' is clever — the cutter makes the halves as equal as they can! But does 'fair' always mean 'exactly equal'?",
+    who:"Adam Smith", said:"Adam Smith studied why people share and trade. He thought we have a natural 'fellow-feeling' — we can imagine how the other person feels, and that helps us play fair.",
+    talk:"When is 'fair' the same as 'equal' — and when is it not?" },
+
+  { id:"norules", theme:"Rules & Power", q:"Imagine for one whole day there were no rules at all — not at home, not at school, nowhere. Sounds fun… but what would actually happen?",
+    stances:["Total freedom — brilliant","Chaos — a bit scary","Fun for an hour, then awful"],
+    twist:"Some rules feel annoying (bedtime!). But which rules are quietly protecting you and other people?",
+    who:"The Federalist Papers", said:"The writers of the Federalist Papers said that if everyone were perfect — 'if men were angels' — we'd need no rules at all. Because we're not, we make rules — even rules for the rule-makers.",
+    talk:"Name one rule you'd keep forever, and one you'd happily bin. Why?" },
+
+  { id:"freedom", theme:"Freedom", q:"We say living things should be free. But what does freedom really mean — doing whatever you like, or something more?",
+    stances:["Doing whatever I want","Choosing my own path","Being treated equally to others"],
+    twist:"If 'free' just means doing anything you like, what happens when your freedom bumps into someone else's?",
+    who:"Frederick Douglass", said:"Frederick Douglass was born into slavery in America and freed himself. He secretly taught himself to read, and said learning was the pathway to freedom — that no one is truly free if someone else owns their choices.",
+    talk:"Can you be free and still follow some rules? How?" },
+
+  { id:"boat", theme:"Who Am I?", q:"A wooden boat has every single plank replaced, one at a time, until none of the original wood is left. Is it still the same boat?",
+    stances:["Yes — same boat","No — a new boat","Somewhere in between"],
+    twist:"Now think about YOU: your body swaps out tiny cells all the time, so 3-year-old you was made of different stuff. Are you the same person you were then?",
+    who:"An ancient Greek puzzle", said:"This is the famous 'Ship of Theseus', and thinkers still argue about it today! It asks what makes something 'the same thing' over time — the stuff it's made of, or the story it carries.",
+    talk:"What makes you YOU — your body, your memories, or something else?" },
+
+  { id:"majority", theme:"Rules & Power", q:"Your class votes on the trip. 20 want the zoo, 10 want the museum, so the zoo wins. But should the bigger group ALWAYS get its way?",
+    stances:["Yes — most votes wins","No — protect the smaller group","Depends what's being decided"],
+    twist:"What if the majority voted for something unfair to the 10 — like 'the 10 carry everyone's bags'? Is 'most votes' always right?",
+    who:"Tocqueville", said:"A French thinker called Tocqueville admired democracy, but warned about the 'tyranny of the majority' — when the biggest group forgets to be fair to smaller groups.",
+    talk:"When should the majority win — and when should we protect the few?" },
+
+  { id:"winning", theme:"The Good Life", q:"You could win a game with a sneaky move the referee won't spot, or lose it playing fairly. Which matters more — winning, or how you play?",
+    stances:["Winning is what counts","How you play matters most","A bit of both"],
+    twist:"If you won by cheating, would it actually feel like winning? Who are you really fooling?",
+    who:"Aristotle", said:"Aristotle thought a good life isn't about winning or piling up prizes, but about becoming a good person through your choices — what he called 'flourishing'.",
+    talk:"Would you rather be remembered as a winner, or as someone fair? Can you be both?" },
+
+  { id:"stranger", theme:"Fairness", q:"Someone you've never met drops their shopping all over the pavement. You're in a hurry. Do you stop to help?",
+    stances:["Yes, always","Only if I have time","Only people I know"],
+    twist:"Imagine it was YOU who dropped everything. What would you hope a stranger would do?",
+    who:"The Bible (the Golden Rule)", said:"An idea found in the Bible — and echoed in many cultures — is the 'Golden Rule': treat others the way you'd want to be treated. It's a simple test you can use almost anywhere.",
+    talk:"Is the Golden Rule always a good guide? Can you think of a time it's tricky?" },
+
+  { id:"legalwrong", theme:"Right & Wrong", q:"Long ago, some laws allowed terrible things, like slavery. So can something be perfectly legal and still be wrong?",
+    stances:["Yes — laws can be wrong","No — the law decides","Usually right, sometimes not"],
+    twist:"If a law CAN be wrong, who gets to say so — and how should people try to change it?",
+    who:"Frederick Douglass", said:"Frederick Douglass argued fiercely that slavery was deeply wrong even though it was legal. He used words and arguments — not just force — to change people's minds, and the law itself.",
+    talk:"If you thought a rule was unfair, what's the best way to try to change it?" },
+
+  { id:"brave", theme:"Who Am I?", q:"Being brave — does it mean feeling no fear at all? Or can you be frightened and brave at the very same time?",
+    stances:["Brave means no fear","Brave means scared but doing it anyway","You can't be both"],
+    twist:"If someone feels no fear at all, are they brave — or just not noticing the danger?",
+    who:"Aristotle", said:"Aristotle said courage sits in the middle: not reckless (no fear of anything) and not cowardly (too much fear), but feeling the fear and acting well anyway.",
+    talk:"Share a time you did something even though you felt nervous." },
+
+  { id:"wrong", theme:"Truth", q:"You're certain you're right — then you discover you were wrong. Annoying! But do we actually learn more from being wrong than from being right?",
+    stances:["From being right","From being wrong","From both equally"],
+    twist:"If you never found out you were wrong, would you ever change your mind — or just stay stuck?",
+    who:"Socrates", said:"Socrates was called the wisest man in Greece, and said it was because he knew how much he DIDN'T know. He believed asking questions and admitting mistakes is how we grow wiser.",
+    talk:"Tell each other about a time being wrong taught you something." },
+
+  { id:"selfish", theme:"People", q:"Deep down, do you think most people are mostly kind and helpful — or mostly looking out for themselves?",
+    stances:["Mostly kind","Mostly selfish","A mix of both"],
+    twist:"Can someone do a kind thing AND get something out of it — like feeling good? Does that make it less kind?",
+    who:"Adam Smith", said:"Adam Smith thought people do look after themselves — but ALSO genuinely care how others feel. He said even a selfish person has some 'fellow-feeling' for others.",
+    talk:"Is it OK to do good things partly because they make you feel good?" },
+
+  { id:"whorules", theme:"Rules & Power", q:"Someone has to decide the rules a whole country lives by. Who should it be — one wise leader, a small group of experts, or everyone together?",
+    stances:["One strong leader","A group of experts","Everybody has a say"],
+    twist:"One clever leader can decide quickly — but what happens if they make a bad or unfair choice and nobody can stop them?",
+    who:"The Federalist Papers", said:"The writers of the Federalist Papers worried about giving anyone too much power. Their clever idea was to split power up, so different parts of government can check each other.",
+    talk:"Why might it be risky to let just ONE person decide everything?" },
+
+  { id:"equalneed", theme:"Fairness", q:"You're handing out coats. Should everyone get exactly one identical coat — even someone who already has three — or should the coats go to whoever is cold?",
+    stances:["The same for everyone","To those who need them most","Depends on the situation"],
+    twist:"'Treat everyone the same' sounds fair… but is it fair to give a warm person and a freezing person exactly the same?",
+    who:"Tocqueville", said:"Tocqueville was fascinated by how much people in democracies love equality. But he saw that 'equal' can mean different things — and getting it right is genuinely tricky.",
+    talk:"When does treating people 'the same' actually become unfair?" },
+
+  { id:"happiness", theme:"The Good Life", q:"Is being happy about feeling good RIGHT NOW (sweets, screens, fun) — or is it something bigger that builds up over a whole life?",
+    stances:["Feeling good right now","Living well over time","Both matter"],
+    twist:"A pile of sweets feels great for five minutes. Does a happy LIFE work the same way, or is it built from something steadier?",
+    who:"Aristotle", said:"Aristotle had a word — 'eudaimonia' — for a deeply happy, flourishing life. He thought it comes not from quick treats but from doing things well and being a good person over time.",
+    talk:"Name something that makes you happy for a moment, and something that makes you happy for a long time." },
+
+  { id:"promise", theme:"Who Am I?", q:"You promised to play with a friend — but then someone needs urgent help at the same time. Should a promise always be kept, no matter what?",
+    stances:["Always keep it","Break it for something more important","Tell your friend and decide together"],
+    twist:"If promises can be broken whenever something 'better' comes up, would anyone ever trust a promise at all?",
+    who:"Aristotle", said:"Aristotle thought trust is the glue of friendship and of society. Keeping your word builds it; breaking it carelessly wears it away.",
+    talk:"What makes a promise worth trusting?" },
+
+  { id:"crowd", theme:"People", q:"Everyone in the room says the answer is A. You're pretty sure it's B. Do you speak up, or go along with the crowd?",
+    stances:["Speak up for B","Go with the crowd","Ask more questions first"],
+    twist:"The crowd is sometimes right and sometimes wrong. How can you tell the difference without just following along?",
+    who:"Socrates", said:"Socrates annoyed a lot of people by questioning what 'everyone knew'. He thought you should follow the best ARGUMENT, not just the biggest crowd.",
+    talk:"When is it brave to disagree — and when is it wise to listen to others?" },
+
+  { id:"future", theme:"Fairness", q:"The choices we make now — about nature and the planet — affect children who aren't even born yet. Do we owe them anything?",
+    stances:["Yes, a lot","A little","We can only think about now"],
+    twist:"People long ago planted trees and built things they'd never see finished — for us. Should we do the same for the future?",
+    who:"Tocqueville", said:"Tocqueville admired how people in communities join together to work for things bigger than themselves — including a better future they may never live to see.",
+    talk:"Name one thing you'd protect or build for children 100 years from now." },
+
+  { id:"onerule", theme:"The Big One", q:"Here's the big one. If you could make a single rule that every person on Earth had to follow, what would it be — and why that one?",
+    stances:["A kindness rule","A fairness rule","A freedom rule","A truth rule"],
+    twist:"Whatever you chose — could it ever clash with itself? (Could 'total freedom' let someone be unkind?) The best rules are surprisingly hard to write!",
+    who:"All of them, together", said:"Aristotle, Adam Smith, Frederick Douglass, Tocqueville and the writers of the Federalist Papers spent their whole lives on this exact question. There's no final answer — which is why we keep thinking.",
+    talk:"Everyone shares their one rule — then try to find a problem with each other's. That's doing philosophy!" },
+];
+
+const THEME_META = {
+  "Truth":         { color:"#b8860b", soft:"#f6eccf" },
+  "Right & Wrong": { color:"#6c4fd0", soft:"#e7e0fb" },
+  "Fairness":      { color:"#1f9b8a", soft:"#d6f0eb" },
+  "Rules & Power": { color:"#2f7ef0", soft:"#dbeafe" },
+  "Freedom":       { color:"#c8642d", soft:"#fbe4d3" },
+  "Who Am I?":     { color:"#a23ba0", soft:"#f4dcf2" },
+  "The Good Life": { color:"#d4694e", soft:"#fbe0d8" },
+  "People":        { color:"#6b7d3a", soft:"#e7eccf" },
+  "The Big One":   { color:"#b8860b", soft:"#f6eccf" },
+};
+
+const MOVES = [
+  { key:"reason",   emoji:"🧱", label:"I gave a reason" },
+  { key:"otherside",emoji:"⚖️", label:"I saw the other side" },
+  { key:"question", emoji:"❓", label:"I'd ask a question" },
+  { key:"changed",  emoji:"🔄", label:"I changed my mind" },
+];
+
+const STORAGE_KEY = "agora-philosophy:v1";
+const TOTAL = QUESTIONS.length;
+function loadState(){ try{ const r=localStorage.getItem(STORAGE_KEY); if(r) return JSON.parse(r); }catch(e){} return null; }
+
+function Agora(){
+  const saved = useRef(loadState()).current;
+  const [answers, setAnswers] = useState((saved && saved.answers) || {}); // { id: {stance, moves:{}} }
+  const [idx, setIdx] = useState(0);
+
+  useEffect(()=>{ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify({ answers })); }catch(e){} }, [answers]);
+
+  const q = QUESTIONS[idx];
+  const meta = THEME_META[q.theme] || THEME_META["Truth"];
+  const a = answers[q.id] || { stance:null, moves:{} };
+
+  const pondered = Object.values(answers).filter(x => x.stance !== null && x.stance !== undefined).length;
+  const badges = Object.values(answers).reduce((n,x)=> n + (x.moves ? Object.values(x.moves).filter(Boolean).length : 0), 0);
+
+  let level = "Newcomer to the Agora";
+  if (pondered >= TOTAL) level = "🏛️ Sage of the Agora";
+  else if (pondered >= 16) level = "🦉 Philosopher";
+  else if (pondered >= 10) level = "⚖️ Debater";
+  else if (pondered >= 5) level = "❓ Questioner";
+  else if (pondered >= 1) level = "🌱 Wonderer";
+
+  function choose(i){ setAnswers(p => ({ ...p, [q.id]: { ...(p[q.id]||{moves:{}}), stance:i } })); }
+  function toggleMove(key){ setAnswers(p => { const cur = p[q.id] || { stance:null, moves:{} }; const moves = { ...(cur.moves||{}) }; moves[key] = !moves[key]; return { ...p, [q.id]: { ...cur, moves } }; }); }
+
+  const answered = a.stance !== null && a.stance !== undefined;
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Nunito:wght@400;600;700;800&display=swap');
+    .ag * { box-sizing:border-box; }
+    .ag { font-family:'Nunito',sans-serif; color:#34291c; min-height:100vh; padding:24px 16px 56px;
+      background: radial-gradient(900px 500px at 12% -8%, #fffaf0 0%, transparent 55%), radial-gradient(900px 520px at 92% 0%, #efe9f7 0%, transparent 55%), #f6f1e6; }
+    .ag-wrap { max-width:680px; margin:0 auto; }
+    .ag-head { text-align:center; }
+    .ag-kicker { font-family:'Cinzel',serif; letter-spacing:.32em; text-transform:uppercase; font-size:11px; color:#b8860b; }
+    .ag-title { font-family:'Cinzel',serif; font-weight:900; font-size:clamp(34px,8vw,56px); margin:.08em 0 .04em; color:#3a2f6a; letter-spacing:.06em; }
+    .ag-sub { font-weight:700; color:#8a7c63; font-size:15px; margin:0 auto; max-width:32ch; line-height:1.4; }
+    .ag-note { font-size:13px; color:#a2937a; font-style:italic; margin:10px auto 0; max-width:40ch; line-height:1.45; }
+
+    .ag-stats { display:flex; gap:10px; margin:20px 0 18px; }
+    .ag-stat { flex:1; background:#fff; border:2px solid #e9dec6; border-radius:14px; padding:9px 12px; text-align:center; box-shadow:0 3px 0 #e9dec6; }
+    .ag-stat b { font-family:'Cinzel',serif; font-size:20px; display:block; line-height:1.1; color:#3a2f6a; }
+    .ag-stat span { font-size:11px; font-weight:800; color:#a2937a; text-transform:uppercase; letter-spacing:.5px; }
+    .ag-level { text-align:center; font-family:'Cinzel',serif; font-weight:700; color:#b8860b; margin:-6px 0 18px; font-size:15px; }
+
+    .ag-card { background:#fff; border:2.5px solid #34291c; border-radius:24px; padding:22px 22px 20px; box-shadow:8px 8px 0 ${meta.color}; position:relative; }
+    .ag-tag { display:inline-block; background:${meta.soft}; color:${meta.color}; font-weight:800; font-size:12px; padding:5px 12px; border-radius:999px; text-transform:uppercase; letter-spacing:.5px; }
+    .ag-qnum { float:right; font-family:'Cinzel',serif; font-weight:700; font-size:12px; color:#bcae93; letter-spacing:.04em; }
+    .ag-q { font-family:'Cinzel',serif; font-weight:700; font-size:clamp(19px,4.2vw,24px); line-height:1.34; margin:14px 0 0; color:#34291c; }
+
+    .ag-stances { display:flex; flex-direction:column; gap:9px; margin-top:18px; }
+    .ag-stance { font-family:'Nunito',sans-serif; text-align:left; font-weight:700; font-size:15px; border:2px solid #e9dec6; background:#fdfbf6; color:#34291c; padding:13px 15px; border-radius:13px; cursor:pointer; box-shadow:0 3px 0 #e9dec6; transition:transform .06s; }
+    .ag-stance:active { transform:translateY(2px); box-shadow:0 1px 0 #e9dec6; }
+    .ag-stance.sel { background:${meta.color}; border-color:${meta.color}; color:#fff; box-shadow:0 3px 0 rgba(0,0,0,.15); }
+
+    .ag-reveal { margin-top:18px; animation:fade .3s ease; }
+    @keyframes fade { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+    .ag-block { background:${meta.soft}; border-radius:15px; padding:13px 15px; margin-top:11px; }
+    .ag-block .lab { display:block; font-weight:800; text-transform:uppercase; font-size:11px; letter-spacing:.6px; color:${meta.color}; margin-bottom:4px; }
+    .ag-block .who { font-family:'Cinzel',serif; font-weight:700; }
+    .ag-block p { margin:0; font-weight:600; line-height:1.5; font-size:15px; color:#4a3c2a; }
+
+    .ag-moves-lab { font-family:'Cinzel',serif; font-weight:700; font-size:13px; color:#8a7c63; margin:18px 0 9px; text-align:center; }
+    .ag-moves { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+    .ag-move { font-family:'Nunito',sans-serif; font-weight:800; font-size:13px; border:2px solid #e9dec6; background:#fff; color:#8a7c63; padding:8px 13px; border-radius:999px; cursor:pointer; box-shadow:0 2px 0 #e9dec6; }
+    .ag-move.on { background:#3a2f6a; border-color:#2a2150; color:#fff; box-shadow:0 2px 0 #2a2150; }
+
+    .ag-nav { display:flex; align-items:center; justify-content:space-between; margin-top:20px; gap:10px; }
+    .ag-navbtn { font-family:'Nunito',sans-serif; border:2px solid #e9dec6; background:#fff; border-radius:12px; padding:10px 16px; font-weight:800; cursor:pointer; box-shadow:0 3px 0 #e9dec6; color:#34291c; }
+    .ag-navbtn:disabled { opacity:.35; cursor:default; box-shadow:none; }
+    .ag-navbtn.next { background:#3a2f6a; color:#fff; border-color:#2a2150; box-shadow:0 3px 0 #2a2150; }
+    .ag-dots { display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-top:18px; }
+    .ag-dot { width:9px; height:9px; border-radius:50%; background:#e2d6bd; }
+    .ag-dot.done { background:#b8860b; }
+    .ag-dot.cur { box-shadow:0 0 0 2px #3a2f6a; }
+  `;
+
+  return (
+    <div className="ag">
+      <style>{css}</style>
+      <div className="ag-wrap">
+        <div className="ag-head">
+          <div className="ag-kicker">Big questions for big thinkers</div>
+          <div className="ag-title">AGORA</div>
+          <div className="ag-sub">Take a side, then think harder. There are no wrong answers — only good reasons.</div>
+          <div className="ag-note">The agora was the open square in ancient Greece where people met to argue, wonder and think — just like Socrates did.</div>
+        </div>
+
+        <div className="ag-stats">
+          <div className="ag-stat"><b>{pondered}<span style={{ fontSize: 12, color: "#bcae93" }}> / {TOTAL}</span></b><span>Pondered</span></div>
+          <div className="ag-stat"><b>{badges}</b><span>Thinking badges</span></div>
+        </div>
+        <div className="ag-level">{level}</div>
+
+        <div className="ag-card">
+          <span className="ag-tag">{q.theme}</span>
+          <span className="ag-qnum">Q {idx + 1} / {TOTAL}</span>
+          <p className="ag-q">{q.q}</p>
+
+          <div className="ag-stances">
+            {q.stances.map((s, i) => (
+              <button key={i} className={"ag-stance" + (a.stance === i ? " sel" : "")} onClick={() => choose(i)}>{s}</button>
+            ))}
+          </div>
+
+          {answered && (
+            <div className="ag-reveal">
+              <div className="ag-block">
+                <span className="lab">🤔 A twist to consider</span>
+                <p>{q.twist}</p>
+              </div>
+              <div className="ag-block">
+                <span className="lab">🏛️ A great thinker said…</span>
+                <p><span className="who">{q.who}.</span> {q.said}</p>
+              </div>
+              <div className="ag-block">
+                <span className="lab">💬 Talk about it</span>
+                <p>{q.talk}</p>
+              </div>
+
+              <div className="ag-moves-lab">Tick the thinking moves you just did — earn a badge for each!</div>
+              <div className="ag-moves">
+                {MOVES.map(m => (
+                  <button key={m.key} className={"ag-move" + (a.moves && a.moves[m.key] ? " on" : "")} onClick={() => toggleMove(m.key)}>
+                    {m.emoji} {m.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="ag-nav">
+          <button className="ag-navbtn" disabled={idx <= 0} onClick={() => setIdx(i => Math.max(0, i - 1))}>← Back</button>
+          <button className="ag-navbtn next" disabled={idx >= TOTAL - 1} onClick={() => setIdx(i => Math.min(TOTAL - 1, i + 1))}>Next question →</button>
+        </div>
+
+        <div className="ag-dots">
+          {QUESTIONS.map((qq, i) => {
+            const done = answers[qq.id] && answers[qq.id].stance !== null && answers[qq.id].stance !== undefined;
+            return <div key={qq.id} className={"ag-dot" + (done ? " done" : "") + (i === idx ? " cur" : "")} onClick={() => setIdx(i)} style={{ cursor: "pointer" }} />;
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Agora />);
+</script>
+</body>
+</html>
