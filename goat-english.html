@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GOAT English · Level Up Your Words</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐐</text></svg>" />
+
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+<style>
+  html, body { margin: 0; height: 100%; background: #f4f9ff; }
+  #root { min-height: 100%; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+/* ============================================================================
+   GOAT GOALS · GOAT English — one challenge a day, 9 weeks (63 days)
+   Pitched for a bright 9-year-old (UK Year 4–5). Read, think, then reveal.
+   Covers: parts of speech · expanded noun & prepositional phrases ·
+           synonyms / antonyms / up-levelling · word play.
+   Edit a question by changing the QUESTIONS array below.
+     type: Parts of Speech | Word Upgrades | Phrase Power | Word Play
+   ========================================================================== */
+
+const QUESTIONS = [
+  // ---- Week 1 ----
+  { day: 1, type: "Parts of Speech", diff: 1, q: "In the sentence \"The happy dog ran quickly,\" which word is the ADJECTIVE?", hint: "An adjective describes a noun (a person, place or thing).", answer: "happy", why: "\"happy\" describes the dog, so it's an adjective." },
+  { day: 2, type: "Word Upgrades", diff: 1, q: "Think of a SYNONYM (a word that means almost the same) for \"big\".", hint: "What word means big but sounds more exciting?", answer: "huge (also: enormous, gigantic, massive)", why: "Synonyms mean nearly the same thing — they let you pick the perfect word." },
+  { day: 3, type: "Phrase Power", diff: 2, q: "In \"The cat sat on the soft cushion,\" which group of words is the PREPOSITIONAL PHRASE?", hint: "It starts with a preposition and tells you WHERE the cat sat.", answer: "on the soft cushion", why: "It begins with the preposition \"on\" and tells us where." },
+  { day: 4, type: "Word Play", diff: 2, q: "Finish the simile: \"as busy as a ___.\"", hint: "A small striped insect that's always working.", answer: "bee", why: "A simile compares two things using \"as\" or \"like\"." },
+  { day: 5, type: "Parts of Speech", diff: 1, q: "In \"She sings beautifully,\" which word is the VERB (the doing word)?", hint: "What is she actually doing?", answer: "sings", why: "A verb is an action or doing word — she sings." },
+  { day: 6, type: "Word Upgrades", diff: 2, q: "What is an ANTONYM (the opposite) of \"ancient\"?", hint: "Ancient means very, very old…", answer: "modern (also: new)", why: "Antonyms are opposites — ancient ↔ modern." },
+  { day: 7, type: "Phrase Power", diff: 2, q: "Turn the plain noun phrase \"the dog\" into an EXPANDED NOUN PHRASE by adding describing words. Can you make one?", hint: "Add some adjectives, and maybe say something more about it.", answer: "e.g. \"the scruffy little dog with muddy paws\"", why: "An expanded noun phrase adds adjectives (and sometimes more) to paint a clearer picture." },
+
+  // ---- Week 2 ----
+  { day: 8, type: "Word Play", diff: 2, q: "What is a stronger, more powerful word for \"walked slowly\"?", hint: "Think of how you'd walk when you're tired or grumpy.", answer: "trudged (also: plodded, trundled)", why: "A strong verb shows HOW someone moved without needing extra words." },
+  { day: 9, type: "Parts of Speech", diff: 2, q: "In \"The lion roared loudly,\" which word is the ADVERB?", hint: "It tells you HOW the lion roared, and it ends in -ly.", answer: "loudly", why: "Adverbs often describe how a verb is done — many (not all) end in -ly." },
+  { day: 10, type: "Word Upgrades", diff: 1, q: "Give a SYNONYM for \"happy\".", hint: "Another word for feeling great.", answer: "joyful (also: cheerful, delighted, thrilled)", why: "All of these mean roughly the same as happy." },
+  { day: 11, type: "Phrase Power", diff: 2, q: "In \"We waited at the bus stop,\" which single word is the PREPOSITION?", hint: "Prepositions show position or direction — like on, under, behind, at.", answer: "at", why: "\"at\" tells us the position — it's the preposition." },
+  { day: 12, type: "Word Play", diff: 2, q: "Is \"He ran like the wind\" a SIMILE or a METAPHOR?", hint: "Does it use the word \"like\"?", answer: "A simile", why: "It compares his running to the wind using \"like\" — that makes it a simile." },
+  { day: 13, type: "Parts of Speech", diff: 2, q: "In \"Tom and Sara played in the park,\" which word is the CONJUNCTION (the joining word)?", hint: "Which little word joins Tom to Sara?", answer: "and", why: "Conjunctions join words or ideas — and, but, or, because…" },
+  { day: 14, type: "Word Upgrades", diff: 2, q: "What is the ANTONYM (opposite) of \"generous\"?", hint: "Generous means happy to share and give.", answer: "mean (also: selfish, stingy)", why: "The opposite of giving freely is being mean or selfish." },
+
+  // ---- Week 3 ----
+  { day: 15, type: "Parts of Speech", diff: 2, q: "In \"She gave the book to him,\" find TWO pronouns.", hint: "Pronouns are little words that stand in for names, like he, she, it, him, her.", answer: "she and him", why: "Pronouns replace nouns — \"she\" and \"him\" stand in for people's names." },
+  { day: 16, type: "Word Upgrades", diff: 2, q: "Up-level this sentence by replacing the dull word \"nice\": \"It was a nice day.\"", hint: "\"nice\" is a bit boring — pick a vivid adjective.", answer: "e.g. \"It was a glorious day\" (or beautiful, sunny, perfect)", why: "Swapping overused words like \"nice\" for stronger ones makes writing sparkle." },
+  { day: 17, type: "Phrase Power", diff: 3, q: "In \"The bird flew over the tall trees,\" what is the PREPOSITIONAL PHRASE?", hint: "Find the preposition first, then everything that goes with it.", answer: "over the tall trees", why: "It starts with the preposition \"over\" and tells us where the bird flew." },
+  { day: 18, type: "Word Play", diff: 2, q: "What does the prefix \"un-\" mean, as in \"unhappy\"?", hint: "Unhappy is the opposite of happy…", answer: "not", why: "The prefix \"un-\" means \"not\" — unhappy means not happy." },
+  { day: 19, type: "Parts of Speech", diff: 2, q: "In \"the shiny red car,\" how many ADJECTIVES are there?", hint: "Count the describing words in front of \"car\".", answer: "Two (shiny and red)", why: "Both \"shiny\" and \"red\" describe the car." },
+  { day: 20, type: "Word Upgrades", diff: 1, q: "Give a SYNONYM for \"scared\".", hint: "Another word for feeling afraid.", answer: "frightened (also: terrified, petrified, afraid)", why: "These all mean roughly the same as scared, with terrified being the strongest." },
+  { day: 21, type: "Word Play", diff: 2, q: "Which homophone fits the gap: \"___ going to the park.\"  (their / there / they're)", hint: "It's short for \"they are\".", answer: "they're", why: "\"they're\" = they are. (\"their\" = belonging to them; \"there\" = a place.)" },
+
+  // ---- Week 4 ----
+  { day: 22, type: "Phrase Power", diff: 2, q: "Which one is an EXPANDED NOUN PHRASE?  (a) \"ran away\"   (b) \"the enormous green dragon\"", hint: "A noun phrase is built around a noun (a thing).", answer: "(b) the enormous green dragon", why: "It's a noun (dragon) with describing words added — (a) has no noun, it's a verb." },
+  { day: 23, type: "Parts of Speech", diff: 2, q: "In \"Quietly, the fox crept away,\" which word is the ADVERB?", hint: "Which word tells you HOW the fox crept?", answer: "Quietly", why: "\"Quietly\" describes how the fox crept — it's an adverb." },
+  { day: 24, type: "Word Upgrades", diff: 2, q: "What is the ANTONYM (opposite) of \"brave\"?", hint: "The opposite of being full of courage.", answer: "cowardly (also: timid, fearful)", why: "Brave ↔ cowardly." },
+  { day: 25, type: "Word Play", diff: 2, q: "Finish the simile: \"as cold as ___.\"", hint: "Something frozen.", answer: "ice", why: "\"as cold as ice\" — a simile comparing cold to ice." },
+  { day: 26, type: "Parts of Speech", diff: 2, q: "In \"We will visit Granny tomorrow,\" which word is a NOUN?", hint: "A noun names a person, place or thing. Who are we visiting?", answer: "Granny", why: "\"Granny\" names a person, so it's a noun (a proper noun, because it's a name)." },
+  { day: 27, type: "Word Upgrades", diff: 2, q: "Give a stronger word than \"said\" for someone who is ANGRY.", hint: "How does an angry person speak?", answer: "shouted (also: snapped, yelled, bellowed)", why: "Swapping \"said\" for a stronger verb shows the speaker's feelings." },
+  { day: 28, type: "Phrase Power", diff: 2, q: "In \"She hid behind the curtain,\" what is the PREPOSITIONAL PHRASE?", hint: "Start with the preposition \"behind\".", answer: "behind the curtain", why: "It begins with \"behind\" and tells us where she hid." },
+
+  // ---- Week 5 ----
+  { day: 29, type: "Word Play", diff: 3, q: "In the word \"hopeful,\" what is the SUFFIX, and what does it add?", hint: "A suffix goes on the END of a word.", answer: "\"-ful\", meaning \"full of\" (full of hope)", why: "Suffixes change a word's meaning — hope + ful = full of hope." },
+  { day: 30, type: "Parts of Speech", diff: 2, q: "In \"The huge waves crashed loudly,\" which word is the ADJECTIVE?", hint: "Which word describes the waves?", answer: "huge", why: "\"huge\" describes the noun \"waves\" — \"loudly\" is the adverb, describing how they crashed." },
+  { day: 31, type: "Word Upgrades", diff: 2, q: "Give a SYNONYM for \"fast\".", hint: "Another word for moving at speed.", answer: "quick (also: rapid, speedy, swift)", why: "All mean roughly the same as fast." },
+  { day: 32, type: "Phrase Power", diff: 3, q: "Add a PREPOSITIONAL PHRASE to this sentence to say WHERE: \"The children played ___.\"", hint: "Start with a preposition like in, on or behind.", answer: "e.g. \"in the garden\" / \"on the beach\" / \"behind the shed\"", why: "A prepositional phrase can tell us where, when or how something happened." },
+  { day: 33, type: "Word Play", diff: 2, q: "Which is correct: \"I can ___ you.\"  (hear / here)", hint: "Which one is about using your ears?", answer: "hear", why: "\"hear\" is what you do with your ears; \"here\" means in this place." },
+  { day: 34, type: "Parts of Speech", diff: 2, q: "In \"Wow! That was amazing,\" which word is the ADJECTIVE?", hint: "Which word describes what \"that\" was like?", answer: "amazing", why: "\"amazing\" describes it — it's an adjective." },
+  { day: 35, type: "Word Upgrades", diff: 2, q: "What is the ANTONYM (opposite) of \"begin\"?", hint: "The opposite of starting.", answer: "end (also: finish, stop)", why: "Begin ↔ end." },
+
+  // ---- Week 6 ----
+  { day: 36, type: "Phrase Power", diff: 2, q: "In \"The boy with the red hat smiled,\" which part tells us WHICH boy?", hint: "Which group of words gives extra detail about the boy?", answer: "with the red hat", why: "This phrase adds detail to the noun phrase \"the boy\" — it expands it." },
+  { day: 37, type: "Parts of Speech", diff: 2, q: "In \"They ran and jumped,\" which TWO words are verbs?", hint: "Find the two doing words.", answer: "ran and jumped", why: "Both are actions, so both are verbs." },
+  { day: 38, type: "Word Play", diff: 2, q: "Finish the simile: \"as light as a ___.\"", hint: "Something a bird is covered in.", answer: "feather", why: "\"as light as a feather\" — comparing lightness to a feather." },
+  { day: 39, type: "Word Upgrades", diff: 2, q: "Up-level the word \"good\" in \"a good book.\"", hint: "\"good\" is overused — what makes a book really worth reading?", answer: "e.g. \"a gripping book\" (or brilliant, fantastic, thrilling)", why: "A precise adjective tells the reader much more than \"good\"." },
+  { day: 40, type: "Parts of Speech", diff: 2, q: "In \"The tall man opened the heavy door,\" find the TWO adjectives.", hint: "One describes the man, one describes the door.", answer: "tall and heavy", why: "\"tall\" describes the man and \"heavy\" describes the door." },
+  { day: 41, type: "Word Upgrades", diff: 1, q: "Give a SYNONYM for \"cold\".", hint: "Another word for chilly weather.", answer: "freezing (also: chilly, icy, frosty)", why: "All mean roughly the same, with freezing the strongest." },
+  { day: 42, type: "Phrase Power", diff: 2, q: "In \"The cat jumped onto the table,\" which word is the PREPOSITION?", hint: "Which word shows where the cat jumped to?", answer: "onto", why: "\"onto\" shows direction/position — it's the preposition." },
+
+  // ---- Week 7 ----
+  { day: 43, type: "Word Play", diff: 3, q: "A metaphor says something IS something else. Which is the METAPHOR?  (a) \"The classroom was a zoo\"  (b) \"The classroom was like a zoo\"", hint: "Which one does NOT use the word \"like\"?", answer: "(a) The classroom was a zoo", why: "(a) says it IS a zoo — that's a metaphor. (b) uses \"like\", so it's a simile." },
+  { day: 44, type: "Parts of Speech", diff: 2, q: "In \"She carefully wrapped the present,\" which word is the ADVERB?", hint: "Which word tells you HOW she wrapped it?", answer: "carefully", why: "\"carefully\" describes how she wrapped — it's an adverb." },
+  { day: 45, type: "Word Upgrades", diff: 2, q: "What is the ANTONYM (opposite) of \"loud\"?", hint: "The opposite of a big noise.", answer: "quiet (also: silent)", why: "Loud ↔ quiet." },
+  { day: 46, type: "Phrase Power", diff: 2, q: "Expand this noun phrase by adding describing words: \"a house.\"", hint: "What kind of house? Add some adjectives.", answer: "e.g. \"a spooky, old, abandoned house\"", why: "Adding adjectives turns a plain noun phrase into an expanded one." },
+  { day: 47, type: "Parts of Speech", diff: 2, q: "In \"Buy bread, milk and eggs,\" which word is the CONJUNCTION?", hint: "Which little word joins the list together?", answer: "and", why: "\"and\" joins the items — it's a conjunction." },
+  { day: 48, type: "Word Play", diff: 2, q: "What does the prefix \"re-\" mean, as in \"redo\" or \"rewrite\"?", hint: "If you redo something, you do it…?", answer: "again", why: "The prefix \"re-\" means \"again\" — rewrite = write again." },
+  { day: 49, type: "Word Upgrades", diff: 2, q: "Give a SYNONYM for \"small\".", hint: "Another word for not very big.", answer: "tiny (also: little, minuscule, miniature)", why: "All mean roughly the same as small, with tiny being stronger." },
+
+  // ---- Week 8 ----
+  { day: 50, type: "Phrase Power", diff: 3, q: "In \"Under the old bridge, a troll waited,\" what is the PREPOSITIONAL PHRASE?", hint: "It comes at the start and begins with \"under\".", answer: "Under the old bridge", why: "It starts with the preposition \"under\" and tells us where the troll waited." },
+  { day: 51, type: "Parts of Speech", diff: 2, q: "In \"The river flowed gently and silently,\" find the TWO adverbs.", hint: "Both tell you HOW the river flowed, and both end in -ly.", answer: "gently and silently", why: "Both describe how the river flowed — they're adverbs." },
+  { day: 52, type: "Word Upgrades", diff: 2, q: "Up-level the verb \"went\" in \"She went into the room.\" (pick a verb that shows HOW)", hint: "Did she go in happily, angrily, secretly…?", answer: "e.g. \"crept\" / \"stormed\" / \"wandered\" / \"burst\"", why: "A precise verb shows the reader the mood without extra words." },
+  { day: 53, type: "Word Play", diff: 2, q: "Which is correct: \"___ a brilliant writer.\"  (your / you're)", hint: "It's short for \"you are\".", answer: "you're", why: "\"you're\" = you are. (\"your\" means belonging to you.)" },
+  { day: 54, type: "Parts of Speech", diff: 2, q: "In \"Suddenly, the door slammed,\" which word is the ADVERB?", hint: "Which word tells you WHEN / how the door slammed?", answer: "Suddenly", why: "\"Suddenly\" describes how/when it happened — it's an adverb." },
+  { day: 55, type: "Word Upgrades", diff: 2, q: "What is the ANTONYM (opposite) of \"difficult\"?", hint: "The opposite of hard to do.", answer: "easy (also: simple)", why: "Difficult ↔ easy." },
+  { day: 56, type: "Phrase Power", diff: 2, q: "Which is the EXPANDED NOUN PHRASE?  (a) \"the cake\"  (b) \"the gooey chocolate cake with rainbow sprinkles\"", hint: "Which one gives lots of juicy detail?", answer: "(b)", why: "It adds adjectives and a phrase to the noun \"cake\" — that's expanded." },
+
+  // ---- Week 9 ----
+  { day: 57, type: "Word Play", diff: 3, q: "Alliteration is when nearby words start with the same sound. Which phrase uses ALLITERATION?  (a) \"slippery silver snakes\"  (b) \"three big snakes\"", hint: "Say them out loud — which one repeats a sound?", answer: "(a) slippery silver snakes", why: "\"slippery\", \"silver\" and \"snakes\" all start with an \"s\" sound." },
+  { day: 58, type: "Parts of Speech", diff: 2, q: "In \"He kicked the ball over the fence,\" which word is the VERB?", hint: "What did he do?", answer: "kicked", why: "\"kicked\" is the action — the verb." },
+  { day: 59, type: "Word Upgrades", diff: 2, q: "Give a SYNONYM for \"beautiful\".", hint: "Another word for lovely to look at.", answer: "gorgeous (also: stunning, lovely, magnificent)", why: "All mean roughly the same as beautiful." },
+  { day: 60, type: "Phrase Power", diff: 2, q: "Add a PREPOSITIONAL PHRASE to say WHEN: \"We will go swimming ___.\"", hint: "Start with a word like after, before or in.", answer: "e.g. \"after lunch\" / \"in the morning\" / \"before tea\"", why: "A prepositional phrase can tell us when something happens, not just where." },
+  { day: 61, type: "Parts of Speech", diff: 2, q: "In \"Wow, those enormous mountains are beautiful,\" find ONE adjective.", hint: "There are two — either one is right!", answer: "enormous (or beautiful)", why: "Both \"enormous\" and \"beautiful\" describe the mountains." },
+  { day: 62, type: "Word Upgrades", diff: 3, q: "Replace the dull word \"got\" with a stronger verb: \"She got the prize.\"", hint: "How exactly did she end up with it?", answer: "e.g. \"won\" / \"received\" / \"claimed\" / \"earned\"", why: "\"got\" is vague — a precise verb tells us how she came to have it." },
+  { day: 63, type: "Word Play", diff: 1, q: "Final challenge! A story for the 500 Words or Young Wild Writers competition should be up to how many words?", hint: "It's in the name of one of them!", answer: "500 words", why: "Both competitions ask for up to 500 words. You've levelled up your word skills — now go and write something brilliant! 🐐✍️" },
+];
+
+const TYPE_META = {
+  "Parts of Speech": { color: "#2f7ef0", soft: "#dbeafe", glyph: "Aa" },
+  "Word Upgrades":   { color: "#15a371", soft: "#d2f3e4", glyph: "⇪" },
+  "Phrase Power":    { color: "#f5681e", soft: "#ffe2d1", glyph: "❝" },
+  "Word Play":       { color: "#7c5cf6", soft: "#e7defe", glyph: "★" },
+};
+
+const STORAGE_KEY = "goat-goals-english:v1";   // separate from maths, so each subject tracks on its own
+const TOTAL = QUESTIONS.length;
+
+function todayISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+function daysBetween(a, b) { return Math.round((new Date(b + "T00:00:00") - new Date(a + "T00:00:00")) / 86400000); }
+function clamp(n, lo, hi) { return Math.min(Math.max(n, lo), hi); }
+function loadState() { try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch (e) {} return null; }
+
+function GoatEnglish() {
+  const saved = useRef(loadState()).current;
+  const [startDate, setStartDate] = useState((saved && saved.startDate) || todayISO());
+  const [completed, setCompleted] = useState((saved && saved.completed) || {});
+  const currentDay = clamp(daysBetween(startDate, todayISO()) + 1, 1, TOTAL);
+  const [selected, setSelected] = useState(() => clamp(daysBetween(((saved && saved.startDate) || todayISO()), todayISO()) + 1, 1, TOTAL));
+  const [showHint, setShowHint] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [myAnswer, setMyAnswer] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
+  const [burst, setBurst] = useState(0);
+
+  useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ startDate, completed })); } catch (e) {} }, [startDate, completed]);
+  useEffect(() => { setShowHint(false); setShowAnswer(false); setMyAnswer(""); }, [selected]);
+
+  const q = QUESTIONS.find((x) => x.day === selected);
+  const meta = TYPE_META[q.type] || TYPE_META["Word Play"];
+  const solvedCount = Object.values(completed).filter((c) => c.solved).length;
+
+  let streak = 0;
+  for (let d = currentDay; d >= 1; d--) { if (completed[d] && completed[d].solved) streak++; else break; }
+
+  function markSolved() { setCompleted((p) => ({ ...p, [selected]: { ...(p[selected] || {}), solved: true } })); setBurst((b) => b + 1); }
+  function unmark() { setCompleted((p) => { const n = { ...p }; if (n[selected]) n[selected] = { ...n[selected], solved: false }; return n; }); }
+  function peek() { setShowAnswer(true); setCompleted((p) => ({ ...p, [selected]: { ...(p[selected] || {}), peeked: true } })); }
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Nunito:wght@400;600;700;800&display=swap');
+    .gge * { box-sizing:border-box; }
+    .gge { font-family:'Nunito',sans-serif; color:#15233b; min-height:100vh; padding:22px 16px 50px;
+      background: radial-gradient(900px 460px at 88% -6%, #fff0cf 0%, transparent 50%), radial-gradient(1000px 520px at 8% 0%, #d4ecff 0%, transparent 55%), radial-gradient(800px 520px at 50% 116%, #d9f5e6 0%, transparent 55%), #f4f9ff; position:relative; }
+    .gge-wrap { max-width:720px; margin:0 auto; position:relative; }
+    .gge-back { display:inline-block; text-decoration:none; color:#7a8aa3; font-weight:800; font-size:14px; margin-bottom:14px; }
+    .gge-back:hover { color:#2f7ef0; }
+    .gge-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:18px; }
+    .gge-title { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:clamp(28px,7vw,44px); line-height:.98; letter-spacing:-1px; margin:0; }
+    .gge-title .hl { color:#f5a623; }
+    .gge-sub { font-weight:700; color:#7a8aa3; font-size:14px; margin-top:4px; }
+    .gge-gear { background:#fff; border:2px solid #e2ebf6; width:42px; height:42px; border-radius:14px; font-size:18px; cursor:pointer; box-shadow:0 3px 0 #e2ebf6; flex:none; }
+    .gge-gear:active { transform:translateY(2px); box-shadow:0 1px 0 #e2ebf6; }
+    .gge-stats { display:flex; gap:10px; margin-bottom:18px; }
+    .gge-stat { flex:1; background:#fff; border:2px solid #e2ebf6; border-radius:16px; padding:10px 14px; box-shadow:0 4px 0 #e2ebf6; }
+    .gge-stat b { font-family:'Bricolage Grotesque',sans-serif; font-size:24px; display:block; line-height:1; }
+    .gge-stat span { font-size:12px; font-weight:800; color:#9aa9bf; text-transform:uppercase; letter-spacing:.6px; }
+    .gge-card { background:#fff; border:2.5px solid #15233b; border-radius:26px; padding:24px 22px; box-shadow:8px 8px 0 ${meta.color}; position:relative; overflow:hidden; }
+    .gge-card .watermark { position:absolute; right:0px; bottom:-46px; font-size:150px; font-family:'Bricolage Grotesque',sans-serif; font-weight:800; color:${meta.soft}; line-height:1; user-select:none; }
+    .gge-badge { display:inline-flex; align-items:center; gap:7px; background:${meta.soft}; color:${meta.color}; font-weight:800; font-size:13px; padding:6px 12px; border-radius:999px; text-transform:uppercase; letter-spacing:.5px; }
+    .gge-day { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:13px; color:#9aa9bf; letter-spacing:.5px; margin-top:14px; }
+    .gge-q { font-size:clamp(19px,4.4vw,24px); font-weight:800; line-height:1.4; margin:6px 0 0; position:relative; }
+    .gge-diff { margin-top:12px; font-size:12px; font-weight:800; color:#aab7cb; }
+    .gge-diff .dot { color:${meta.color}; }
+    .gge-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; position:relative; }
+    .gge-btn { font-family:'Nunito',sans-serif; font-weight:800; font-size:15px; border:2.5px solid #15233b; background:#fff; padding:11px 18px; border-radius:14px; cursor:pointer; box-shadow:0 4px 0 #15233b; transition:transform .05s; }
+    .gge-btn:active { transform:translateY(3px); box-shadow:0 1px 0 #15233b; }
+    .gge-btn.solve { background:${meta.color}; color:#fff; }
+    .gge-btn.solved { background:#15a371; color:#fff; }
+    .gge-btn.ghost { box-shadow:0 4px 0 #e2ebf6; border-color:#e2ebf6; color:#5b6b82; }
+    .gge-reveal { margin-top:16px; background:${meta.soft}; border-radius:16px; padding:14px 16px; font-weight:600; line-height:1.5; animation:pop .25s ease; }
+    .gge-reveal .lab { font-weight:800; color:${meta.color}; text-transform:uppercase; font-size:12px; letter-spacing:.6px; display:block; margin-bottom:3px; }
+    .gge-reveal .ans { font-family:'Bricolage Grotesque',sans-serif; font-size:21px; font-weight:800; }
+    .gge-answerbox { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+    .gge-input { flex:1; min-width:160px; font-family:'Nunito',sans-serif; font-weight:700; font-size:16px; padding:11px 15px; border:2.5px solid #e2ebf6; border-radius:14px; outline:none; color:#15233b; background:#fff; }
+    .gge-input:focus { border-color:${meta.color}; }
+    .gge-youwrote { font-weight:700; margin-bottom:6px; }
+    .gge-youwrote b { color:${meta.color}; }
+    @keyframes pop { from {opacity:0; transform:translateY(6px) scale(.98);} to {opacity:1; transform:none;} }
+    .gge-nav { display:flex; align-items:center; justify-content:space-between; margin-top:18px; gap:10px; }
+    .gge-navbtn { border:2px solid #e2ebf6; background:#fff; border-radius:12px; padding:8px 14px; font-weight:800; cursor:pointer; box-shadow:0 3px 0 #e2ebf6; }
+    .gge-navbtn:disabled { opacity:.35; cursor:default; box-shadow:none; }
+    .gge-today { background:#15233b; color:#fff; border:2px solid #15233b; box-shadow:0 3px 0 #000; }
+    .gge-section { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:16px; margin:26px 0 10px; color:#5b6b82; }
+    .gge-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:7px; }
+    .gge-cell { aspect-ratio:1; border-radius:11px; border:2px solid #e2ebf6; background:#fff; font-weight:800; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#aab7cb; position:relative; }
+    .gge-cell.done { background:#15a371; color:#fff; border-color:#15a371; }
+    .gge-cell.peeked { background:#eef3fb; color:#9aa9bf; border-color:#dde6f2; }
+    .gge-cell.today { border-color:#15233b; border-width:2.5px; color:#15233b; box-shadow:0 0 0 3px #ffe0a3; }
+    .gge-cell.sel { transform:scale(1.08); box-shadow:0 0 0 2px ${meta.color}; }
+    .gge-weeklab { font-size:11px; font-weight:800; color:#b6c2d6; grid-column:1 / -1; margin-top:6px; text-transform:uppercase; letter-spacing:.5px; }
+    .gge-modal { position:fixed; inset:0; background:rgba(21,35,59,.5); display:flex; align-items:center; justify-content:center; padding:20px; z-index:50; }
+    .gge-modal-card { background:#f4f9ff; border:2.5px solid #15233b; border-radius:22px; padding:24px; max-width:380px; width:100%; box-shadow:8px 8px 0 #f5a623; }
+    .gge-modal-card h3 { font-family:'Bricolage Grotesque',sans-serif; margin:0 0 6px; font-size:22px; }
+    .gge-modal-card p { font-size:14px; color:#5b6b82; font-weight:600; margin:0 0 16px; line-height:1.5; }
+    .gge-modal-card input { font-family:'Nunito',sans-serif; font-size:16px; font-weight:700; padding:10px 12px; border:2px solid #15233b; border-radius:12px; width:100%; margin-bottom:16px; }
+    .gge-confetti { position:absolute; left:50%; top:30%; pointer-events:none; }
+    .gge-confetti i { position:absolute; width:9px; height:9px; border-radius:2px; animation:fly .9s ease-out forwards; }
+    @keyframes fly { to { transform:translate(var(--x), var(--y)) rotate(var(--r)); opacity:0; } }
+  `;
+  const confettiColors = ["#2f7ef0", "#15a371", "#f5681e", "#7c5cf6", "#f5a623"];
+
+  return (
+    <div className="gge">
+      <style>{css}</style>
+      <div className="gge-wrap">
+        <a className="gge-back" href="index.html">← GOAT Goals</a>
+        <div className="gge-head">
+          <div>
+            <h1 className="gge-title">GOAT <span className="hl">English</span> ✍️</h1>
+            <div className="gge-sub">Level up your words · one challenge a day · 63 days</div>
+          </div>
+          <button className="gge-gear" onClick={() => setShowSettings(true)} title="Settings">⚙</button>
+        </div>
+
+        <div className="gge-stats">
+          <div className="gge-stat"><b>{solvedCount}<span style={{ fontSize: 13, color: "#b6c2d6" }}> / {TOTAL}</span></b><span>Mastered</span></div>
+          <div className="gge-stat"><b>{streak} 🔥</b><span>Day streak</span></div>
+          <div className="gge-stat"><b>{currentDay}</b><span>Today is day</span></div>
+        </div>
+
+        <div className="gge-card">
+          <div className="watermark">{meta.glyph}</div>
+          <span className="gge-badge">{meta.glyph} {q.type}</span>
+          <div className="gge-day">DAY {q.day}{q.day === currentDay ? " · today" : q.day < currentDay ? " · catch-up" : " · coming up"}</div>
+          <p className="gge-q">{q.q}</p>
+          <div className="gge-diff">Challenge level: <span className="dot">{"▲".repeat(q.diff)}</span><span style={{ color: "#e3eaf4" }}>{"▲".repeat(3 - q.diff)}</span></div>
+
+          <div className="gge-answerbox">
+            <input
+              className="gge-input"
+              type="text"
+              placeholder="Think it through, then type your answer…"
+              value={myAnswer}
+              onChange={(e) => setMyAnswer(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") setShowAnswer(true); }}
+            />
+            <button className="gge-btn solve" onClick={() => setShowAnswer(true)}>✓ Check</button>
+          </div>
+
+          <div className="gge-actions">
+            {burst > 0 && (
+              <div className="gge-confetti" key={burst}>
+                {Array.from({ length: 14 }).map((_, i) => {
+                  const ang = (i / 14) * Math.PI * 2;
+                  return <i key={i} style={{ background: confettiColors[i % confettiColors.length], "--x": `${Math.cos(ang) * 90}px`, "--y": `${Math.sin(ang) * 90 - 20}px`, "--r": `${Math.random() * 360}deg` }} />;
+                })}
+              </div>
+            )}
+            {q.hint && <button className="gge-btn ghost" onClick={() => setShowHint((s) => !s)}>{showHint ? "Hide hint" : "💡 Hint"}</button>}
+            <button className="gge-btn ghost" onClick={peek}>👀 Just show me</button>
+            {completed[selected] && completed[selected].solved
+              ? <button className="gge-btn solved" onClick={unmark}>✓ Mastered!</button>
+              : <button className="gge-btn solve" onClick={markSolved}>I nailed it ✍️</button>}
+          </div>
+
+          {showHint && q.hint && (<div className="gge-reveal"><span className="lab">Hint</span>{q.hint}</div>)}
+          {showAnswer && (
+            <div className="gge-reveal">
+              <span className="lab">Answer</span>
+              {myAnswer.trim() && <div className="gge-youwrote">You wrote: <b>{myAnswer}</b></div>}
+              <div className="ans">{q.answer}</div>
+              {q.why && <div style={{ marginTop: 8, fontWeight: 600 }}>{q.why}</div>}
+            </div>
+          )}
+        </div>
+
+        <div className="gge-nav">
+          <button className="gge-navbtn" disabled={selected <= 1} onClick={() => setSelected((s) => Math.max(1, s - 1))}>← Prev</button>
+          <button className="gge-navbtn gge-today" onClick={() => setSelected(currentDay)}>Jump to today</button>
+          <button className="gge-navbtn" disabled={selected >= TOTAL} onClick={() => setSelected((s) => Math.min(TOTAL, s + 1))}>Next →</button>
+        </div>
+
+        <div className="gge-section">Your 63-day word climb 🏔️</div>
+        <div className="gge-grid">
+          {QUESTIONS.map((item, idx) => {
+            const c = completed[item.day] || {};
+            const cls = ["gge-cell", c.solved ? "done" : (c.peeked ? "peeked" : ""), item.day === currentDay ? "today" : "", item.day === selected ? "sel" : ""].join(" ");
+            const newWeek = idx % 7 === 0;
+            return (
+              <React.Fragment key={item.day}>
+                {newWeek && <div className="gge-weeklab">Week {idx / 7 + 1}</div>}
+                <button className={cls} onClick={() => setSelected(item.day)} title={`Day ${item.day} · ${item.type}`}>{c.solved ? "✓" : item.day}</button>
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+
+      {showSettings && (
+        <div className="gge-modal" onClick={() => setShowSettings(false)}>
+          <div className="gge-modal-card" onClick={(e) => e.stopPropagation()}>
+            <h3>When does summer start? 🐐</h3>
+            <p>Pick the first day of the holidays. The climb lines “today’s challenge” up with the calendar from there.</p>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            <button className="gge-btn solve" style={{ width: "100%" }} onClick={() => setShowSettings(false)}>Save</button>
+            <button className="gge-btn ghost" style={{ width: "100%", marginTop: 10 }}
+              onClick={() => { if (window.confirm("Reset all progress?")) { setCompleted({}); setShowSettings(false); } }}>Reset progress</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<GoatEnglish />);
+</script>
+</body>
+</html>
