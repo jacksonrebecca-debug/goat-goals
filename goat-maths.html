@@ -147,11 +147,12 @@ function GoatMaths() {
   const [selected, setSelected] = useState(() => clamp(daysBetween(((saved && saved.startDate) || todayISO()), todayISO()) + 1, 1, TOTAL));
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [myAnswer, setMyAnswer] = useState("");
   const [showSettings, setShowSettings] = useState(false);
   const [burst, setBurst] = useState(0);
 
   useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ startDate, completed })); } catch (e) {} }, [startDate, completed]);
-  useEffect(() => { setShowHint(false); setShowAnswer(false); }, [selected]);
+  useEffect(() => { setShowHint(false); setShowAnswer(false); setMyAnswer(""); }, [selected]);
 
   const q = QUESTIONS.find((x) => x.day === selected);
   const meta = TYPE_META[q.type] || TYPE_META["Fun"];
@@ -198,6 +199,11 @@ function GoatMaths() {
     .ggm-reveal { margin-top:16px; background:${meta.soft}; border-radius:16px; padding:14px 16px; font-weight:600; line-height:1.5; animation:pop .25s ease; }
     .ggm-reveal .lab { font-weight:800; color:${meta.color}; text-transform:uppercase; font-size:12px; letter-spacing:.6px; display:block; margin-bottom:3px; }
     .ggm-reveal .ans { font-family:'Bricolage Grotesque',sans-serif; font-size:22px; font-weight:800; }
+    .ggm-answerbox { display:flex; gap:10px; margin-top:22px; flex-wrap:wrap; }
+    .ggm-input { flex:1; min-width:160px; font-family:'Nunito',sans-serif; font-weight:700; font-size:16px; padding:11px 15px; border:2.5px solid #e2ebf6; border-radius:14px; outline:none; color:#15233b; background:#fff; }
+    .ggm-input:focus { border-color:${meta.color}; }
+    .ggm-youwrote { font-weight:700; margin-bottom:6px; }
+    .ggm-youwrote b { color:${meta.color}; }
     @keyframes pop { from {opacity:0; transform:translateY(6px) scale(.98);} to {opacity:1; transform:none;} }
     .ggm-nav { display:flex; align-items:center; justify-content:space-between; margin-top:18px; gap:10px; }
     .ggm-navbtn { border:2px solid #e2ebf6; background:#fff; border-radius:12px; padding:8px 14px; font-weight:800; cursor:pointer; box-shadow:0 3px 0 #e2ebf6; }
@@ -248,6 +254,18 @@ function GoatMaths() {
           <p className="ggm-q">{q.q}</p>
           <div className="ggm-diff">Challenge level: <span className="dot">{"▲".repeat(q.diff)}</span><span style={{ color: "#e3eaf4" }}>{"▲".repeat(5 - q.diff)}</span></div>
 
+          <div className="ggm-answerbox">
+            <input
+              className="ggm-input"
+              type="text"
+              placeholder="Work it out, then type your answer…"
+              value={myAnswer}
+              onChange={(e) => setMyAnswer(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") setShowAnswer(true); }}
+            />
+            <button className="ggm-btn solve" onClick={() => setShowAnswer(true)}>✓ Check</button>
+          </div>
+
           <div className="ggm-actions">
             {burst > 0 && (
               <div className="ggm-confetti" key={burst}>
@@ -258,7 +276,7 @@ function GoatMaths() {
               </div>
             )}
             {q.hint && <button className="ggm-btn ghost" onClick={() => setShowHint((s) => !s)}>{showHint ? "Hide hint" : "💡 Hint"}</button>}
-            <button className="ggm-btn ghost" onClick={peek}>👀 Reveal answer</button>
+            <button className="ggm-btn ghost" onClick={peek}>👀 Just show me</button>
             {completed[selected] && completed[selected].solved
               ? <button className="ggm-btn solved" onClick={unmark}>✓ Conquered!</button>
               : <button className="ggm-btn solve" onClick={markSolved}>I nailed it 💪</button>}
@@ -268,6 +286,7 @@ function GoatMaths() {
           {showAnswer && (
             <div className="ggm-reveal">
               <span className="lab">Answer</span>
+              {myAnswer.trim() && <div className="ggm-youwrote">You wrote: <b>{myAnswer}</b></div>}
               <div className="ans">{q.answer}</div>
               {q.why && <div style={{ marginTop: 8, fontWeight: 600 }}>{q.why}</div>}
             </div>
