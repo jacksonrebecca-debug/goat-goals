@@ -148,11 +148,12 @@ function GoatMaths() {
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [myAnswer, setMyAnswer] = useState("");
+  const [feedback, setFeedback] = useState(null); // null | "correct" | "wrong"
   const [showSettings, setShowSettings] = useState(false);
   const [burst, setBurst] = useState(0);
 
   useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ startDate, completed })); } catch (e) {} }, [startDate, completed]);
-  useEffect(() => { setShowHint(false); setShowAnswer(false); setMyAnswer(""); }, [selected]);
+  useEffect(() => { setShowHint(false); setShowAnswer(false); setMyAnswer(""); setFeedback(null); }, [selected]);
 
   const q = QUESTIONS.find((x) => x.day === selected);
   const meta = TYPE_META[q.type] || TYPE_META["Fun"];
@@ -164,6 +165,21 @@ function GoatMaths() {
   function markSolved() { setCompleted((prev) => ({ ...prev, [selected]: { ...(prev[selected] || {}), solved: true } })); setBurst((b) => b + 1); }
   function unmark() { setCompleted((prev) => { const n = { ...prev }; if (n[selected]) n[selected] = { ...n[selected], solved: false }; return n; }); }
   function peek() { setShowAnswer(true); setCompleted((prev) => ({ ...prev, [selected]: { ...(prev[selected] || {}), peeked: true } })); }
+
+  // Forgiving match: ignore case, spaces, £/$ signs, commas, common units, and a leading "x="
+  function norm(s) {
+    return String(s).toLowerCase().trim()
+      .replace(/[£$,\s]/g, "")
+      .replace(/^x=/, "")
+      .replace(/(cm2|cm²|m2|m²|cm|mm|km|kg|ml|°c|°|degrees?|pence|p|%)$/, "")
+      .replace(/(seconds?|minutes?|hours?|days?|apples?|sweets?|children|cars?)$/, "");
+  }
+  function check() {
+    if (!myAnswer.trim()) return;
+    const correct = norm(myAnswer) === norm(q.answer);
+    setFeedback(correct ? "correct" : "wrong");
+    if (correct && !(completed[selected] && completed[selected].solved)) markSolved();
+  }
 
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Nunito:wght@400;600;700;800&display=swap');
@@ -204,6 +220,10 @@ function GoatMaths() {
     .ggm-input:focus { border-color:${meta.color}; }
     .ggm-youwrote { font-weight:700; margin-bottom:6px; }
     .ggm-youwrote b { color:${meta.color}; }
+    .ggm-fb { margin-top:16px; border-radius:16px; padding:14px 16px; font-weight:700; line-height:1.5; animation:pop .25s ease; }
+    .ggm-fb.correct { background:#d9f5e6; border:2.5px solid #15a371; color:#0f6b4a; }
+    .ggm-fb.wrong { background:#fff2d6; border:2.5px solid #e0a417; color:#8a5a00; }
+    .ggm-fb .big { font-family:'Bricolage Grotesque',sans-serif; font-size:19px; display:block; margin-bottom:3px; }
     @keyframes pop { from {opacity:0; transform:translateY(6px) scale(.98);} to {opacity:1; transform:none;} }
     .ggm-nav { display:flex; align-items:center; justify-content:space-between; margin-top:18px; gap:10px; }
     .ggm-navbtn { border:2px solid #e2ebf6; background:#fff; border-radius:12px; padding:8px 14px; font-weight:800; cursor:pointer; box-shadow:0 3px 0 #e2ebf6; }
@@ -260,11 +280,24 @@ function GoatMaths() {
               type="text"
               placeholder="Work it out, then type your answer…"
               value={myAnswer}
-              onChange={(e) => setMyAnswer(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") setShowAnswer(true); }}
+              onChange={(e) => { setMyAnswer(e.target.value); if (feedback) setFeedback(null); }}
+              onKeyDown={(e) => { if (e.key === "Enter") check(); }}
             />
-            <button className="ggm-btn solve" onClick={() => setShowAnswer(true)}>✓ Check</button>
+            <button className="ggm-btn solve" onClick={check}>✓ Check</button>
           </div>
+
+          {feedback === "correct" && (
+            <div className="ggm-fb correct">
+              <span className="big">✓ Spot on — you nailed it! 💪</span>
+              {q.why && <div style={{ fontWeight: 600 }}>{q.why}</div>}
+            </div>
+          )}
+          {feedback === "wrong" && (
+            <div className="ggm-fb wrong">
+              <span className="big">Not quite — have another go! 🤔</span>
+              <div style={{ fontWeight: 600 }}>Check your working and try again. Stuck? Tap the hint, or “Just show me”.</div>
+            </div>
+          )}
 
           <div className="ggm-actions">
             {burst > 0 && (
